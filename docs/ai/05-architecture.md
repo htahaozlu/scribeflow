@@ -227,6 +227,14 @@ yazit web [--host --port]   # [web] extra
 ```
 Respect `NO_COLOR`, auto-disable color when piped, `--json` machine output, `--lang en|tr`.
 
+> Implementation notes (kept honest vs the roadmap):
+> - **Audio language is `--language`/`-l`**; **interface language is `--ui-lang`/`--lang en|tr`**
+>   (the spec token `--lang` was overloaded above; the CLI splits the two and accepts `--lang`
+>   as the UI-language alias).
+> - **`--format` and the txt/srt/vtt/json exporters land in P7** (docs/ai/06). Until then
+>   `transcribe` always writes the `.txt` transcript; the `formats` config key is inert.
+> - `gen-notebook` (P5) and `web` (P8) are added in their phases.
+
 ## 9. Web UI (D1, optional [web] extra)
 
 FastAPI wrapping the SAME pipeline. One calm page: pick/upload source → auto-or-choose model

@@ -77,9 +77,10 @@ class FasterWhisperBackend:
     def transcribe_chunk(self, request: ChunkRequest) -> TranscriptionResult:
         model = self._ensure_model()
         opts = request.options
+        language_arg = None if opts.language in ("auto", "") else opts.language
         segments_iter, info = model.transcribe(
             str(request.audio_path),
-            language=opts.language,
+            language=language_arg,
             task=opts.task,
             beam_size=opts.beam_size,
             temperature=opts.temperature,
@@ -106,7 +107,8 @@ class FasterWhisperBackend:
             )
 
         raw_text = " ".join(parts).strip()
-        language = getattr(info, "language", None) or opts.language
+        fallback_lang = opts.language if opts.language not in ("auto", "") else "und"
+        language = getattr(info, "language", None) or fallback_lang
         duration = float(getattr(info, "duration", 0.0) or 0.0)
         return TranscriptionResult(
             text=raw_text,

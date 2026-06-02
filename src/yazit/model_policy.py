@@ -20,6 +20,18 @@ GLOBAL_DEFAULT_MODEL = "large-v3-turbo"
 # Never auto-selected for Turkish (English-only / too low quality).
 FORBIDDEN_AUTO_MODELS = {"tiny", "base"}
 
+# Condensed catalog for ``yazit models`` (docs/ai/03 §1).
+MODEL_CATALOG: dict[str, dict[str, str]] = {
+    "large-v3": {"params": "1550M", "turkish": "best", "note": "highest quality"},
+    "large-v3-turbo": {"params": "809M", "turkish": "very good", "note": "~6–8x faster (default)"},
+    "large-v2": {"params": "1550M", "turkish": "very good", "note": ""},
+    "medium": {"params": "769M", "turkish": "good", "note": "good budget"},
+    "small": {"params": "244M", "turkish": "draft", "note": "drafts only"},
+    "base": {"params": "74M", "turkish": "weak", "note": "not auto-selected"},
+    "tiny": {"params": "39M", "turkish": "avoid", "note": "not auto-selected"},
+    "distil-large-v3": {"params": "756M", "turkish": "English-only", "note": "excluded for TR"},
+}
+
 
 def _pick(table: dict[str, str], want: str) -> str:
     return table.get(want, table["default"])

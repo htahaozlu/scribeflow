@@ -91,6 +91,8 @@ check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = [
+    "tomllib",
+    "tomli",
     "faster_whisper.*",
     "torch.*",
     "whisper.*",

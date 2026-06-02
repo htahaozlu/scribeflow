@@ -12,6 +12,7 @@ so a single patch point can inject crashes in tests (docs/ai/02 §6).
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -68,9 +69,13 @@ def write_text(path: Path, content: str) -> None:
 
 
 def append_log(path: Path, message: str) -> None:
-    """Timestamped append + a mirrored ``print(..., flush=True)``."""
+    """Timestamped append to the durable log + a live mirror on **stderr**.
+
+    The mirror goes to stderr (not stdout) so progress never pollutes a CLI
+    ``--json`` payload; it stays visible in Colab/terminals all the same.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     stamped = f"[{timestamp()}] {message}"
-    print(stamped, flush=True)
+    print(stamped, file=sys.stderr, flush=True)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(stamped + "\n")
