@@ -9,7 +9,9 @@ docs/ai/02 §5 invariant 5).
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from yazit.engine import io_atomic
 from yazit.engine.types import (
@@ -18,6 +20,42 @@ from yazit.engine.types import (
     TranscriptionResult,
     TranscriptSegment,
 )
+
+
+@dataclass
+class _FWSegment:
+    start: float
+    end: float
+    text: str
+
+
+@dataclass
+class _FWInfo:
+    language: str
+    duration: float
+
+
+class FakeWhisperModel:
+    """Mimics ``faster_whisper.WhisperModel`` — ``transcribe`` returns
+    ``(segments_iterator, info)``. Lets us test the adapter's normalization with
+    no model download. Records the kwargs of each call for assertion."""
+
+    def __init__(
+        self,
+        segments: list[tuple[float, float, str]],
+        *,
+        language: str = "tr",
+        duration: float = 5.0,
+    ) -> None:
+        self._segments = segments
+        self._language = language
+        self._duration = duration
+        self.calls: list[tuple[str, dict[str, Any]]] = []
+
+    def transcribe(self, audio: str, **kwargs: Any) -> tuple[Any, _FWInfo]:
+        self.calls.append((audio, kwargs))
+        segments = (_FWSegment(s, e, t) for (s, e, t) in self._segments)
+        return segments, _FWInfo(self._language, self._duration)
 
 
 class FakeDeterministicBackend:
