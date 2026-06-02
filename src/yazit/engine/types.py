@@ -51,6 +51,34 @@ class FileSignature:
     sha256: str | None = None  # only for copied/downloaded media
 
 
+@dataclass(frozen=True)
+class SourceSpec:
+    kind: Literal["local", "upload", "drive", "url"]
+    uri: str
+
+
+@dataclass(frozen=True)
+class ResolvedMedia:
+    """A source materialized to a local file the engine can chunk."""
+
+    local_path: Path
+    display_name: str
+    source_id: str
+    origin_uri: str
+    signature: FileSignature
+
+
+@dataclass(frozen=True)
+class RuntimeDirs:
+    """Where each kind of I/O lives. The Errno-107 split (docs/ai/01, §4 of doc 05):
+    heavy/scratch I/O on a LOCAL ``workspace_dir``; only small durable transcripts
+    + checkpoints on ``output_dir`` (which may be a Drive FUSE mount)."""
+
+    workspace_dir: Path  # SCRATCH / heavy I/O: downloads, audio chunks, temp files
+    output_dir: Path  # DURABLE: chunk_outputs/, transcript, progress.json, summary.json
+    cache_dir: Path  # model downloads
+
+
 # --------------------------------------------------------------------------- #
 # Backend Protocol vocabulary (docs/ai/05 §2 — from the Codex memo)
 # --------------------------------------------------------------------------- #

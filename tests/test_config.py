@@ -12,7 +12,9 @@ from yazit.config import ConfigError, YazitConfig, load_config
 def test_defaults() -> None:
     cfg = load_config({}, env={})
     assert cfg == YazitConfig()
-    assert cfg.output_dir == Path("yazit-output")
+    # Dirs are None when unset — the runtime target fills the defaults.
+    assert cfg.output_dir is None
+    assert cfg.workspace_dir is None
     assert cfg.language == "tr"
     assert cfg.chunk_minutes == 20
     assert cfg.formats == ("txt",)

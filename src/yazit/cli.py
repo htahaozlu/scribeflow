@@ -21,10 +21,12 @@ from yazit.__about__ import APP_NAME, SLUG, __version__
 from yazit.backends import registry
 from yazit.config import ConfigError, YazitConfig, load_config
 from yazit.devices import detect_host
-from yazit.engine.chunking import discover_media, ensure_ffmpeg, ffmpeg_version
+from yazit.engine.chunking import ensure_ffmpeg, ffmpeg_version
 from yazit.engine.pipeline import EngineConfig, run_batch
-from yazit.engine.types import ChunkingSpec, TranscribeOptions
+from yazit.engine.types import ChunkingSpec, RuntimeDirs, SourceSpec, TranscribeOptions
 from yazit.model_policy import MODEL_CATALOG, ModelResolution, auto_select
+from yazit.runtime.base import resolve_runtime
+from yazit.sources.base import infer_kind, resolve_source
 
 # --------------------------------------------------------------------------- #
 # Tiny i18n + color helpers (no dependencies; "sade ama sanatsal")
@@ -99,10 +101,10 @@ def _resolve(cfg: YazitConfig) -> ModelResolution:
     )
 
 
-def _engine_config(cfg: YazitConfig) -> EngineConfig:
+def _engine_config(cfg: YazitConfig, dirs: RuntimeDirs) -> EngineConfig:
     return EngineConfig(
-        output_dir=cfg.output_dir,
-        workspace_dir=cfg.workspace_dir,
+        output_dir=dirs.output_dir,
+        workspace_dir=dirs.workspace_dir,
         chunking=ChunkingSpec(chunk_seconds=cfg.chunk_minutes * 60),
         options=TranscribeOptions(
             language=cfg.language,
@@ -144,27 +146,36 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
     style = make_style(sys.stdout)
     lang = cfg.ui_lang
 
-    source = Path(args.source).expanduser()
-    if source.is_dir():
-        media = discover_media(source)
-    elif source.is_file():
-        media = [source]
-    else:
-        media = []
-    if not media:
-        print(style.red(t("no_media", lang, path=source)), file=sys.stderr)
-        return 2
-
     try:
         ensure_ffmpeg()
     except RuntimeError:
         print(style.red(t("ffmpeg_missing", lang)), file=sys.stderr)
         return 4
 
+    # The runtime target owns the scratch-vs-durable split (Errno-107).
+    runtime = resolve_runtime(args.runtime)
+    dirs = runtime.resolve_dirs(cfg.output_dir, cfg.workspace_dir, cfg.cache_dir)
+    runtime.bootstrap()
+
+    kind = args.source_kind or infer_kind(args.source)
+    spec = SourceSpec(kind=kind, uri=args.source)  # type: ignore[arg-type]
+    try:
+        media = resolve_source(spec, dirs)
+    except FileNotFoundError:
+        print(style.red(t("no_media", lang, path=args.source)), file=sys.stderr)
+        return 2
+    except (RuntimeError, NotImplementedError) as exc:
+        print(style.red(str(exc)), file=sys.stderr)
+        return 6
+    media_paths = [m.local_path for m in media]
+    if not media_paths:
+        print(style.red(t("no_media", lang, path=args.source)), file=sys.stderr)
+        return 2
+
     res = _resolve(cfg)
     if not registry.is_available(res.backend):
-        spec = registry.KNOWN_BACKENDS.get(res.backend)
-        extra = spec.extra if spec and spec.extra else "?"
+        backend_spec = registry.KNOWN_BACKENDS.get(res.backend)
+        extra = backend_spec.extra if backend_spec and backend_spec.extra else "?"
         print(
             style.red(t("backend_unavailable", lang, backend=res.backend, extra=extra)),
             file=sys.stderr,
@@ -176,7 +187,7 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
             model=res.model,
             device=res.device,
             compute_type=res.compute_type,
-            download_root=str(cfg.cache_dir) if cfg.cache_dir else None,
+            download_root=str(dirs.cache_dir),
         )
     except NotImplementedError as exc:
         print(style.red(str(exc)), file=sys.stderr)
@@ -188,7 +199,7 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
                 t(
                     "transcribing",
                     lang,
-                    n=len(media),
+                    n=len(media_paths),
                     backend=res.backend,
                     model=res.model,
                     device=res.device,
@@ -197,12 +208,18 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
             )
         )
 
-    summary = run_batch(_engine_config(cfg), backend, media)
+    try:
+        summary = run_batch(_engine_config(cfg, dirs), backend, media_paths)
+    except (RuntimeError, OSError) as exc:
+        # ffmpeg failure, model load/download error, FUSE drop, etc. — a clean
+        # message, never a traceback (committed transcripts are already durable).
+        print(style.red(f"transcription failed: {exc}"), file=sys.stderr)
+        return 7
 
     if cfg.json_output:
         print(json.dumps(summary, ensure_ascii=False, indent=2, default=str))
     else:
-        print(style.green(t("done", lang, out=cfg.output_dir)))
+        print(style.green(t("done", lang, out=dirs.output_dir)))
         for video in summary.get("videos", []):
             transcript = video.get("transcript_path")
             if transcript:
@@ -342,6 +359,16 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--out", default=None, help="durable output dir (transcripts + checkpoints)")
     tr.add_argument("--workspace", default=None, help="scratch dir (audio chunks; heavy I/O)")
     tr.add_argument("--cache-dir", dest="cache_dir", default=None, help="model download cache")
+    tr.add_argument(
+        "--runtime", choices=["auto", "local", "colab"], default=None, help="execution target"
+    )
+    tr.add_argument(
+        "--source-kind",
+        dest="source_kind",
+        choices=["local", "url", "drive", "upload"],
+        default=None,
+        help="override source kind (else inferred from the argument)",
+    )
     tr.add_argument(
         "--overwrite", action="store_true", help="discard any existing run and start fresh"
     )

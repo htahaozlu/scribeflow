@@ -125,6 +125,33 @@ def test_bad_env_yields_friendly_config_error(
     assert "Traceback" not in err  # never a raw traceback
 
 
+def test_transcribe_engine_error_is_friendly(
+    sample_video: Path, tmp_path: Path, fake_backend: None, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    def _boom(*a: object, **k: object) -> None:
+        raise RuntimeError("ffmpeg exploded")
+
+    monkeypatch.setattr("yazit.cli.run_batch", _boom)
+    rc = main(
+        [
+            "transcribe",
+            str(sample_video),
+            "--out",
+            str(tmp_path / "o"),
+            "--workspace",
+            str(tmp_path / "w"),
+            "--chunk-minutes",
+            "1",
+        ]
+    )
+    assert rc == 7
+    err = capsys.readouterr().err
+    assert "transcription failed" in err
+    assert "ffmpeg exploded" in err
+    assert "Traceback" not in err
+
+
 def test_no_color_disables_ansi(
     sample_video: Path, tmp_path: Path, fake_backend: None, monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],

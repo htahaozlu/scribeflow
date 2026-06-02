@@ -30,8 +30,10 @@ class ConfigError(ValueError):
 
 @dataclass(frozen=True)
 class YazitConfig:
-    output_dir: Path = Path(DEFAULT_OUTPUT_DIR)
-    workspace_dir: Path = Path(DEFAULT_WORKSPACE_DIR)
+    # Dirs are None when unset — the RuntimeTarget fills the defaults so it can
+    # apply the Colab Errno-107 split (docs/ai/05 §4). See yazit.runtime.
+    output_dir: Path | None = None
+    workspace_dir: Path | None = None
     cache_dir: Path | None = None
     # backend / model (None ⇒ auto-select for the detected host)
     backend: str | None = None
