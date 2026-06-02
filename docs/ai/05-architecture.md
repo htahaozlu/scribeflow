@@ -233,7 +233,9 @@ Respect `NO_COLOR`, auto-disable color when piped, `--json` machine output, `--l
 >   as the UI-language alias).
 > - **`--format` and the txt/srt/vtt/json exporters land in P7** (docs/ai/06). Until then
 >   `transcribe` always writes the `.txt` transcript; the `formats` config key is inert.
-> - `gen-notebook` (P5) and `web` (P8) are added in their phases.
+> - `gen-notebook` (P5) and `web` (P8) are added in their phases. The notebook
+>   always writes durable output to Google Drive on Colab, so the spec's
+>   `[--drive]` flag is omitted (it would be inert/redundant).
 
 ## 9. Web UI (D1, optional [web] extra)
 

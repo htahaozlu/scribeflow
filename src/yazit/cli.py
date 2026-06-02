@@ -25,6 +25,7 @@ from yazit.engine.chunking import ensure_ffmpeg, ffmpeg_version
 from yazit.engine.pipeline import EngineConfig, run_batch
 from yazit.engine.types import ChunkingSpec, RuntimeDirs, SourceSpec, TranscribeOptions
 from yazit.model_policy import MODEL_CATALOG, ModelResolution, auto_select
+from yazit.notebook.generator import NotebookSpec, generate_colab_notebook
 from yazit.runtime.base import resolve_runtime
 from yazit.sources.base import infer_kind, resolve_source
 
@@ -319,6 +320,27 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     return 0 if ok else 1
 
 
+def cmd_gen_notebook(args: argparse.Namespace) -> int:
+    style = make_style(sys.stdout)
+    kind = infer_kind(args.source)
+    extras = ("url",) if kind == "url" else ("drive",) if kind == "drive" else ()
+    spec = NotebookSpec(
+        source=args.source,
+        model=args.model,
+        backend=args.backend,
+        language=args.language or "tr",
+        chunk_minutes=args.chunk_minutes or 20,
+        extras=extras,
+    )
+    out = generate_colab_notebook(spec, Path(args.output))
+    if args.json:
+        print(json.dumps({"notebook": str(out), "source": args.source, "extras": list(extras)}))
+    else:
+        print(style.green(f"Wrote Colab notebook → {out}"))
+        print(style.dim("  Open it in Colab and run the cells top to bottom."))
+    return 0
+
+
 # --------------------------------------------------------------------------- #
 # Parser + dispatch
 # --------------------------------------------------------------------------- #
@@ -384,6 +406,16 @@ def build_parser() -> argparse.ArgumentParser:
     dc = sub.add_parser("doctor", help="check ffmpeg / device / backends")
     _add_common(dc)
     dc.set_defaults(func=cmd_doctor)
+
+    gn = sub.add_parser("gen-notebook", help="generate a runnable Colab notebook")
+    gn.add_argument("source", help="media source the notebook will transcribe (path/url/drive:)")
+    gn.add_argument("-o", "--output", default="yazit_colab.ipynb", help="output .ipynb path")
+    gn.add_argument("--model", default=None)
+    gn.add_argument("--backend", default=None)
+    gn.add_argument("--language", "-l", default=None)
+    gn.add_argument("--chunk-minutes", dest="chunk_minutes", type=int, default=None)
+    _add_common(gn)
+    gn.set_defaults(func=cmd_gen_notebook)
 
     return parser
 
