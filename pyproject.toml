@@ -1,0 +1,112 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yazit"
+dynamic = ["version"]
+description = "Portable, resumable, multi-backend Whisper transcription — runs anywhere, resumes after crashes."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "htahaozlu" }]
+keywords = ["whisper", "transcription", "speech-to-text", "faster-whisper", "turkish", "colab"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Scientific/Engineering",
+]
+
+# Base install is intentionally small: the pure-Python engine + the default
+# faster-whisper backend (CPU-capable). Heavy/optional backends and the web UI
+# live behind extras. ffmpeg is the one documented system dependency.
+dependencies = [
+    "faster-whisper>=1.0",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.urls]
+Homepage = "https://github.com/htahaozlu/yazit"
+Repository = "https://github.com/htahaozlu/yazit"
+Issues = "https://github.com/htahaozlu/yazit/issues"
+
+[project.scripts]
+yazit = "yazit.cli:main"
+
+[project.optional-dependencies]
+gpu = []          # torch + CUDA: documented, not hard-pinned (see docs/CONFIG.md)
+cpp = ["pywhispercpp>=1.2"]
+openai = ["openai-whisper>=20231117"]
+web = ["fastapi>=0.110", "uvicorn>=0.29", "jinja2>=3.1", "python-multipart>=0.0.9"]
+url = ["yt-dlp>=2024.1.1"]
+drive = ["google-api-python-client>=2.0", "google-auth-httplib2>=0.2", "google-auth-oauthlib>=1.2"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "nbformat>=5.10",
+]
+
+[tool.hatch.version]
+path = "src/yazit/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yazit"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/yazit", "tests", "docs", "README.md", "README.tr.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # allow Turkish characters in strings/comments
+
+[tool.ruff.lint.isort]
+known-first-party = ["yazit"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src/yazit", "tests"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "faster_whisper.*",
+    "torch.*",
+    "whisper.*",
+    "pywhispercpp.*",
+    "yt_dlp.*",
+    "google.*",
+    "googleapiclient.*",
+    "psutil",
+    "fastapi.*",
+    "uvicorn.*",
+    "jinja2.*",
+    "nbformat.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
