@@ -2,13 +2,13 @@
 
 > Lowest-risk-first. Each phase has a **gate** that must pass before the next. The engine lift (P1)
 > and its crash-injection tests are the foundation — do not skip ahead. Greenfield: build under a new
-> directory (`yazit/`), `git init`, do NOT mutate the old `Film-Transcriber` tree (it's the reference).
+> directory (`scribeflow/`), `git init`, do NOT mutate the old `Film-Transcriber` tree (it's the reference).
 
 ## P0 — Scaffold
-- New repo dir `yazit/`, `git init`, `src/yazit/` layout, `pyproject.toml` (hatchling), `__about__.py` name token.
+- New repo dir `scribeflow/`, `git init`, `src/scribeflow/` layout, `pyproject.toml` (hatchling), `__about__.py` name token.
 - Extras declared: `[gpu] [cpp] [openai] [web] [url] [drive] [dev]`. `.gitignore` (dist, *.zip, .idea, __pycache__, media, models, .venv).
 - Apache-2.0 LICENSE, empty CI workflows, `ruff`+`mypy`+`pytest` configured.
-- **Gate:** `pip install -e .[dev]` works; `yazit --version` prints; `ruff`+`mypy` clean on empty pkg.
+- **Gate:** `pip install -e .[dev]` works; `scribeflow --version` prints; `ruff`+`mypy` clean on empty pkg.
 
 ## P1 — Engine lift + tests (FOUNDATION — parity with proven core)
 - Port `io_atomic.py`, `text.py`, `chunking.py` (+ `ChunkingSpec`, manifest w/ chunking identity),
@@ -31,17 +31,17 @@
 
 ## P3 — Config + CLI (first usable product)
 - `config.py` layered (defaults ← toml ← env ← cli). `cli.py`: `transcribe`, `models`, `doctor`.
-- **Gate:** `yazit transcribe ./sample.mp4` produces a transcript on a clean machine with zero config;
-  `yazit doctor` reports ffmpeg/device/VRAM/backends; `yazit models` shows the host's auto-pick.
+- **Gate:** `scribeflow transcribe ./sample.mp4` produces a transcript on a clean machine with zero config;
+  `scribeflow doctor` reports ffmpeg/device/VRAM/backends; `scribeflow models` shows the host's auto-pick.
 
 ## P4 — Sources + runtime targets
 - `sources/`: `local` → `url` (yt-dlp) → `drive`. `runtime/`: `local` → `colab` (RuntimeDirs split:
   workspace=/content, output=Drive — Errno-107 baked in). `remote.py` = stub.
-- **Gate:** `yazit transcribe <youtube-url>` works; Colab target writes heavy I/O local, transcripts
+- **Gate:** `scribeflow transcribe <youtube-url>` works; Colab target writes heavy I/O local, transcripts
   to the durable dir; a forced FUSE-style failure during chunking does NOT lose committed transcripts.
 
 ## P5 — Notebook generator (kill the duplication)
-- `notebook/generator.py` + `template.ipynb.j2`; `yazit gen-notebook`. Delete `build_colab_bundle.py`
+- `notebook/generator.py` + `template.ipynb.j2`; `scribeflow gen-notebook`. Delete `build_colab_bundle.py`
   reliance; one parameterized template replaces the 5 copied notebooks.
 - **Gate:** generated `.ipynb` opens in Colab and runs the proven flow (mount→install→transcribe→resume) on a small input.
 
@@ -64,7 +64,7 @@
 - Bilingual `README.md` + `README.tr.md` (centered header, badges, demo GIF), governance files,
   `docs/PUBLISHING.md`/`RELEASING.md`/`CONFIG.md`, CHANGELOG.
 - CI: matrix tests (Linux/macOS, py3.10–3.12) + `release.yml` + idempotent `publish.yml` (PyPI OIDC).
-- **Gate:** tag `v0.1.0` → CI publishes to PyPI; `pip install yazit` from PyPI works on a fresh box;
+- **Gate:** tag `v0.1.0` → CI publishes to PyPI; `pip install scribeflow` from PyPI works on a fresh box;
   README quickstart reproduces a transcription.
 
 ## Cross-cutting rules (every phase)

@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from yazit.engine.text import build_full_transcript, clean_transcript, tail_prompt
+from scribeflow.engine.text import build_full_transcript, clean_transcript, tail_prompt
 
 
 @pytest.mark.parametrize(

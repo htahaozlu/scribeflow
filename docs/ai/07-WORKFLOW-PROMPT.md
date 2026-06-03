@@ -27,9 +27,9 @@ implementation to the specs in `docs/ai/00`–`06`.
 > `05-architecture.md`, `06-implementation-roadmap.md`. Treat doc 02's invariants as inviolable and
 > doc 05's Backend Protocol + RunIdentity as the canonical design.
 >
-> **Where:** greenfield. Create a sibling directory `../yazit/` (or a path I give you), `git init`,
-> `src/yazit/` layout. NEVER mutate the old `Film-Transcriber` tree — it is the reference engine to
-> port from, not to edit. Name token: `yazit` (package/CLI/PyPI) / `Yazıt` (display); keep it in one
+> **Where:** greenfield. Create a sibling directory `../scribeflow/` (or a path I give you), `git init`,
+> `src/scribeflow/` layout. NEVER mutate the old `Film-Transcriber` tree — it is the reference engine to
+> port from, not to edit. Name token: `scribeflow` (package/CLI/PyPI) / `ScribeFlow` (display); keep it in one
 > constant.
 >
 > **Engine is lift-and-shelter, not rewrite.** Port `colab_runtime/drive_batch_transcriber.py`
@@ -67,8 +67,8 @@ implementation to the specs in `docs/ai/00`–`06`.
 >   ffmpeg is the one documented system dep.
 >
 > **Definition of done (v1):** all P0–P9 gates green; `pip install -e .` then
-> `yazit transcribe ./tests/fixtures/sample_5s.mp4` produces a transcript with zero config; kill +
-> rerun resumes with no duplication (proven by the crash test); `yazit gen-notebook` emits a runnable
+> `scribeflow transcribe ./tests/fixtures/sample_5s.mp4` produces a transcript with zero config; kill +
+> rerun resumes with no duplication (proven by the crash test); `scribeflow gen-notebook` emits a runnable
 > Colab notebook; all 3 backends produce consistent normalized output; bilingual README + governance
 > files + CI publish workflow exist; tag `v0.1.0` is ready.
 >
@@ -84,7 +84,7 @@ implementation to the specs in `docs/ai/00`–`06`.
 - **Cost/time:** this is a large multi-phase build; expect a long run and meaningful token spend. The
   phase gates keep it honest — you'll see real test output at each step, not "looks done".
 - **First run scope:** if you want a smaller first bite, tell the workflow "stop after P3" — that
-  yields a working local CLI (`yazit transcribe`) you can try immediately, then resume from P4 later.
-- **Name:** swap `yazit`/`Yazıt` if you pick a different name before launching; it's a single token.
+  yields a working local CLI (`scribeflow transcribe`) you can try immediately, then resume from P4 later.
+- **Name:** swap `scribeflow`/`ScribeFlow` if you pick a different name before launching; it's a single token.
 - **whisper.cpp on your Mac:** P6 gives you the Metal-accelerated path — that's the phase that makes
   local Apple-Silicon transcription fast (faster-whisper alone is CPU-only on Mac).

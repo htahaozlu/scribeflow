@@ -33,7 +33,7 @@ body:
         - Backend setup (faster-whisper / whisper.cpp / openai-whisper)
         - whisper.cpp on Apple Silicon (binary + ggml model, env vars)
         - GPU / CUDA setup
-        - Config file (yazit.toml) / CLI flags
+        - Config file (scribeflow.toml) / CLI flags
         - Sources (local / URL / Google Drive / upload)
         - Resume / checkpoints behavior
         - Colab usage
@@ -45,9 +45,9 @@ body:
   - type: textarea
     id: doctor
     attributes:
-      label: "`yazit doctor` output (recommended)"
+      label: "`scribeflow doctor` output (recommended)"
       description: >
-        Paste the output of `yazit doctor`. It shows ffmpeg, the detected device,
+        Paste the output of `scribeflow doctor`. It shows ffmpeg, the detected device,
         VRAM/RAM, and which backends are available — this usually answers half the
         question by itself. Optional but very helpful.
       render: text
@@ -67,7 +67,7 @@ body:
     id: tried
     attributes:
       label: What have you tried?
-      description: Commands, config, env vars (e.g. `YAZIT_WHISPERCPP_BIN`, `YAZIT_WHISPERCPP_MODELS`) you have already attempted.
+      description: Commands, config, env vars (e.g. `SCRIBEFLOW_WHISPERCPP_BIN`, `SCRIBEFLOW_WHISPERCPP_MODELS`) you have already attempted.
       render: shell
     validations:
       required: false

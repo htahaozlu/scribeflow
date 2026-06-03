@@ -11,9 +11,9 @@ from pathlib import Path
 
 import pytest
 
+from scribeflow.backends import registry
+from scribeflow.cli import main
 from tests.fakes import FakeDeterministicBackend
-from yazit.backends import registry
-from yazit.cli import main
 
 
 @pytest.fixture
@@ -117,7 +117,7 @@ def test_lang_alias_accepted(capsys: pytest.CaptureFixture[str]) -> None:
 def test_bad_env_yields_friendly_config_error(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    monkeypatch.setenv("YAZIT_CHUNK_MINUTES", "abc")
+    monkeypatch.setenv("SCRIBEFLOW_CHUNK_MINUTES", "abc")
     rc = main(["models"])  # a verb that doesn't even use chunk_minutes
     assert rc == 5
     err = capsys.readouterr().err
@@ -132,7 +132,7 @@ def test_transcribe_engine_error_is_friendly(
     def _boom(*a: object, **k: object) -> None:
         raise RuntimeError("ffmpeg exploded")
 
-    monkeypatch.setattr("yazit.cli.run_batch", _boom)
+    monkeypatch.setattr("scribeflow.cli.run_batch", _boom)
     rc = main(
         [
             "transcribe",

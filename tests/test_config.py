@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from yazit.config import ConfigError, YazitConfig, load_config
+from scribeflow.config import ConfigError, ScribeFlowConfig, load_config
 
 
 def test_defaults() -> None:
     cfg = load_config({}, env={})
-    assert cfg == YazitConfig()
+    assert cfg == ScribeFlowConfig()
     # Dirs are None when unset — the runtime target fills the defaults.
     assert cfg.output_dir is None
     assert cfg.workspace_dir is None
@@ -21,7 +21,7 @@ def test_defaults() -> None:
 
 
 def test_precedence_cli_over_env_over_file(tmp_path: Path) -> None:
-    toml = tmp_path / "yazit.toml"
+    toml = tmp_path / "scribeflow.toml"
     toml.write_text(
         "\n".join(
             [
@@ -35,7 +35,7 @@ def test_precedence_cli_over_env_over_file(tmp_path: Path) -> None:
         ),
         encoding="utf-8",
     )
-    env = {"YAZIT_MODEL": "from-env", "YAZIT_CHUNK_MINUTES": "15"}
+    env = {"SCRIBEFLOW_MODEL": "from-env", "SCRIBEFLOW_CHUNK_MINUTES": "15"}
     cli = {"model": "from-cli"}
 
     cfg = load_config(cli, config_path=toml, env=env)
@@ -47,10 +47,10 @@ def test_precedence_cli_over_env_over_file(tmp_path: Path) -> None:
 
 def test_env_type_coercion() -> None:
     env = {
-        "YAZIT_CHUNK_MINUTES": "10",
-        "YAZIT_BEAM_SIZE": "3",
-        "YAZIT_VAD_FILTER": "false",
-        "YAZIT_OUTPUT_DIR": "/tmp/out",
+        "SCRIBEFLOW_CHUNK_MINUTES": "10",
+        "SCRIBEFLOW_BEAM_SIZE": "3",
+        "SCRIBEFLOW_VAD_FILTER": "false",
+        "SCRIBEFLOW_OUTPUT_DIR": "/tmp/out",
     }
     cfg = load_config({}, env=env)
     assert cfg.chunk_minutes == 10
@@ -72,11 +72,11 @@ def test_unknown_keys_ignored() -> None:
 
 def test_bad_env_int_raises_config_error() -> None:
     with pytest.raises(ConfigError):
-        load_config({}, env={"YAZIT_CHUNK_MINUTES": "abc"})
+        load_config({}, env={"SCRIBEFLOW_CHUNK_MINUTES": "abc"})
 
 
 def test_malformed_toml_raises_config_error(tmp_path: Path) -> None:
-    toml = tmp_path / "yazit.toml"
+    toml = tmp_path / "scribeflow.toml"
     toml.write_text("this is = = not valid", encoding="utf-8")
     with pytest.raises(ConfigError):
         load_config({}, config_path=toml, env={})
@@ -94,8 +94,8 @@ def test_unknown_format_raises_config_error() -> None:
 
 def test_toml_type_confusion_is_tolerated(tmp_path: Path) -> None:
     # `output` as a string (not a table) must not crash — it is ignored.
-    toml = tmp_path / "yazit.toml"
+    toml = tmp_path / "scribeflow.toml"
     toml.write_text('output = "oops"\n[backend]\nmodel = "m"\n', encoding="utf-8")
     cfg = load_config({}, config_path=toml, env={})
     assert cfg.model == "m"
-    assert cfg.output_dir == YazitConfig().output_dir
+    assert cfg.output_dir == ScribeFlowConfig().output_dir

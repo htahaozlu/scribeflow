@@ -1,9 +1,9 @@
 # Configuration
 
-Yazıt resolves every setting from **four layers**, each overriding the one before it:
+ScribeFlow resolves every setting from **four layers**, each overriding the one before it:
 
 ```
-defaults  <  config file (yazit.toml)  <  environment (YAZIT_*)  <  CLI flags
+defaults  <  config file (scribeflow.toml)  <  environment (SCRIBEFLOW_*)  <  CLI flags
 ```
 
 So a value passed on the command line always wins, an environment variable beats
@@ -11,20 +11,20 @@ the config file, and the config file beats the built-in defaults. Anything you
 leave unset falls through to the next-lower layer — and several knobs left unset
 mean *auto-select for the detected host* (model, backend, device, compute type).
 
-The resolved settings become a frozen `YazitConfig`, which the CLI turns into the
+The resolved settings become a frozen `ScribeFlowConfig`, which the CLI turns into the
 engine's run config plus the backend resolution.
 
 ---
 
-## The `YazitConfig` fields
+## The `ScribeFlowConfig` fields
 
-Every field below maps 1:1 to a `yazit.toml` key, a `YAZIT_*` env var, and/or a
+Every field below maps 1:1 to a `scribeflow.toml` key, a `SCRIBEFLOW_*` env var, and/or a
 CLI flag. `None` means *unset → auto / runtime-filled*.
 
 | Field | Default | Meaning |
 | --- | --- | --- |
-| `output_dir` | `None` → `yazit-output` | Durable output: transcripts, exports, and resume checkpoints. On Colab this stays on Drive. |
-| `workspace_dir` | `None` → `yazit-workspace` | Scratch: extracted audio chunks and heavy I/O. On Colab this moves to local `/content` to dodge the Errno-107 Drive-FUSE split. |
+| `output_dir` | `None` → `scribeflow-output` | Durable output: transcripts, exports, and resume checkpoints. On Colab this stays on Drive. |
+| `workspace_dir` | `None` → `scribeflow-workspace` | Scratch: extracted audio chunks and heavy I/O. On Colab this moves to local `/content` to dodge the Errno-107 Drive-FUSE split. |
 | `cache_dir` | `None` | Model download cache (passed to the backend's `download_root`). |
 | `backend` | `None` → auto | `faster-whisper` (default), `whispercpp`, or `openai-whisper`. |
 | `model` | `None` → auto | Model id (e.g. `large-v3-turbo`). Unset lets the policy pick per host + `want`. |
@@ -43,24 +43,24 @@ CLI flag. `None` means *unset → auto / runtime-filled*.
 | `json_output` | `False` | Emit machine-readable JSON to stdout instead of the human summary. |
 | `ui_lang` | `en` | Interface/message language: `en` or `tr`. (This is the UI, not the audio.) |
 
-> Note: `ui_lang` controls the language of Yazıt's own messages. The **audio**
+> Note: `ui_lang` controls the language of ScribeFlow's own messages. The **audio**
 > language is `language` (CLI `--language/-l`). Don't confuse the two.
 
 ---
 
-## Sample `yazit.toml`
+## Sample `scribeflow.toml`
 
-Drop a `yazit.toml` (or `.yazit.toml`) in the directory you run from, or place a
-`config.toml` under `$XDG_CONFIG_HOME/yazit/` (defaults to
-`~/.config/yazit/config.toml`). All sections and keys are optional.
+Drop a `scribeflow.toml` (or `.scribeflow.toml`) in the directory you run from, or place a
+`config.toml` under `$XDG_CONFIG_HOME/scribeflow/` (defaults to
+`~/.config/scribeflow/config.toml`). All sections and keys are optional.
 
 ```toml
-# yazit.toml — every key is optional; unset keys fall through to defaults/auto.
+# scribeflow.toml — every key is optional; unset keys fall through to defaults/auto.
 
 [output]
-dir       = "yazit-output"        # durable: transcripts + checkpoints
-workspace = "yazit-workspace"     # scratch: audio chunks / heavy I/O
-cache     = "~/.cache/yazit"      # model download cache
+dir       = "scribeflow-output"        # durable: transcripts + checkpoints
+workspace = "scribeflow-workspace"     # scratch: audio chunks / heavy I/O
+cache     = "~/.cache/scribeflow"      # model download cache
 formats   = ["txt", "srt", "vtt"] # txt is always written regardless
 
 [backend]
@@ -99,66 +99,66 @@ Paths support `~` expansion. `formats` may also be written as a comma string
 ## Environment variables
 
 These override the config file. Values are coerced (ints, floats, bools) just
-like file/CLI values; a bad value (e.g. `YAZIT_CHUNK_MINUTES=abc`) is reported as
+like file/CLI values; a bad value (e.g. `SCRIBEFLOW_CHUNK_MINUTES=abc`) is reported as
 a clean *config error*, never a traceback.
 
 | Env var | Field |
 | --- | --- |
-| `YAZIT_OUTPUT_DIR` | `output_dir` |
-| `YAZIT_WORKSPACE_DIR` | `workspace_dir` |
-| `YAZIT_CACHE_DIR` | `cache_dir` |
-| `YAZIT_BACKEND` | `backend` |
-| `YAZIT_MODEL` | `model` |
-| `YAZIT_DEVICE` | `device` |
-| `YAZIT_COMPUTE_TYPE` | `compute_type` |
-| `YAZIT_WANT` | `want` |
-| `YAZIT_LANGUAGE` | `language` (audio) |
-| `YAZIT_CHUNK_MINUTES` | `chunk_minutes` |
-| `YAZIT_BEAM_SIZE` | `beam_size` |
-| `YAZIT_VAD_FILTER` | `vad_filter` |
-| `YAZIT_LANG` | `ui_lang` (interface) |
+| `SCRIBEFLOW_OUTPUT_DIR` | `output_dir` |
+| `SCRIBEFLOW_WORKSPACE_DIR` | `workspace_dir` |
+| `SCRIBEFLOW_CACHE_DIR` | `cache_dir` |
+| `SCRIBEFLOW_BACKEND` | `backend` |
+| `SCRIBEFLOW_MODEL` | `model` |
+| `SCRIBEFLOW_DEVICE` | `device` |
+| `SCRIBEFLOW_COMPUTE_TYPE` | `compute_type` |
+| `SCRIBEFLOW_WANT` | `want` |
+| `SCRIBEFLOW_LANGUAGE` | `language` (audio) |
+| `SCRIBEFLOW_CHUNK_MINUTES` | `chunk_minutes` |
+| `SCRIBEFLOW_BEAM_SIZE` | `beam_size` |
+| `SCRIBEFLOW_VAD_FILTER` | `vad_filter` |
+| `SCRIBEFLOW_LANG` | `ui_lang` (interface) |
 
 Booleans accept `1`, `true`, `yes`, `on` (case-insensitive) as true; anything
 else is false.
 
-> `YAZIT_LANG` also seeds the default interface language when no `--ui-lang` is
+> `SCRIBEFLOW_LANG` also seeds the default interface language when no `--ui-lang` is
 > passed: if it (or `LANG`) starts with `tr`, the UI defaults to Turkish.
 
 ### whisper.cpp environment variables
 
 The whisper.cpp backend (Apple-Silicon Metal path) is located at runtime and is
-**not** part of `YazitConfig`. Point it at your binary and ggml models with:
+**not** part of `ScribeFlowConfig`. Point it at your binary and ggml models with:
 
 | Env var | Meaning |
 | --- | --- |
-| `YAZIT_WHISPERCPP_BIN` | Path to the `whisper-cli` binary (resolution order: explicit arg → this var → `whisper-cli` / `whisper-cpp` / `main` on `PATH`). |
-| `YAZIT_WHISPERCPP_MODELS` | Directory containing ggml `.bin` model files. |
+| `SCRIBEFLOW_WHISPERCPP_BIN` | Path to the `whisper-cli` binary (resolution order: explicit arg → this var → `whisper-cli` / `whisper-cpp` / `main` on `PATH`). |
+| `SCRIBEFLOW_WHISPERCPP_MODELS` | Directory containing ggml `.bin` model files. |
 
 ```bash
-export YAZIT_WHISPERCPP_BIN="$HOME/whisper.cpp/build/bin/whisper-cli"
-export YAZIT_WHISPERCPP_MODELS="$HOME/whisper.cpp/models"
-yazit transcribe ./lecture.mp4 --backend whispercpp
+export SCRIBEFLOW_WHISPERCPP_BIN="$HOME/whisper.cpp/build/bin/whisper-cli"
+export SCRIBEFLOW_WHISPERCPP_MODELS="$HOME/whisper.cpp/models"
+scribeflow transcribe ./lecture.mp4 --backend whispercpp
 ```
 
 If the binary or a ggml model can't be found, the backend raises a clean message
-telling you to install `whisper-cli` (or set `YAZIT_WHISPERCPP_BIN`) and to
-provide a ggml `.bin` (or set `YAZIT_WHISPERCPP_MODELS`).
+telling you to install `whisper-cli` (or set `SCRIBEFLOW_WHISPERCPP_BIN`) and to
+provide a ggml `.bin` (or set `SCRIBEFLOW_WHISPERCPP_MODELS`).
 
 ---
 
 ## Model auto-select
 
-When you leave `backend`, `model`, `device`, and `compute_type` unset, Yazıt
+When you leave `backend`, `model`, `device`, and `compute_type` unset, ScribeFlow
 picks them for the **detected host** — biased by `want`
 (`default` / `speed` / `quality`). The global default model is `large-v3-turbo`.
 
-Run `yazit models` to see the catalog plus this host's auto-pick and the reason,
-and `yazit doctor` to see device/VRAM/RAM/backend availability.
+Run `scribeflow models` to see the catalog plus this host's auto-pick and the reason,
+and `scribeflow doctor` to see device/VRAM/RAM/backend availability.
 
 The policy in short:
 
 - **Apple Silicon** → whisper.cpp on Metal **when its binary is available**,
-  otherwise faster-whisper on CPU with `int8`. Yazıt never offers `cuda`/`mps`
+  otherwise faster-whisper on CPU with `int8`. ScribeFlow never offers `cuda`/`mps`
   to faster-whisper on macOS-arm64.
 - **NVIDIA CUDA** → `float16` when VRAM `>= 8 GB`, else `int8_float16`.
 - **CPU** → `int8`.
@@ -174,9 +174,9 @@ the policy only fills the blanks you leave.
 ## Precedence cheatsheet
 
 ```
-1. defaults                 (built into YazitConfig)
-2. yazit.toml / .yazit.toml (cwd) or ~/.config/yazit/config.toml, or --config FILE
-3. YAZIT_* environment variables
+1. defaults                 (built into ScribeFlowConfig)
+2. scribeflow.toml / .scribeflow.toml (cwd) or ~/.config/scribeflow/config.toml, or --config FILE
+3. SCRIBEFLOW_* environment variables
 4. CLI flags (--model, --language, --format, ...)
 ```
 

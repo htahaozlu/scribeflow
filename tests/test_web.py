@@ -24,8 +24,8 @@ pytestmark = pytest.mark.skipif(
 def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     from fastapi.testclient import TestClient
 
-    from yazit.backends import registry
-    from yazit.web.app import create_app
+    from scribeflow.backends import registry
+    from scribeflow.web.app import create_app
 
     monkeypatch.setattr(registry, "create_backend", lambda *a, **k: FakeDeterministicBackend())
     app = create_app(output_dir=tmp_path / "out", workspace_dir=tmp_path / "ws")
@@ -35,7 +35,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 def test_index_serves_page(client) -> None:
     resp = client.get("/")
     assert resp.status_code == 200
-    assert "Yazıt" in resp.text
+    assert "ScribeFlow" in resp.text
     assert "Transcribe" in resp.text
 
 

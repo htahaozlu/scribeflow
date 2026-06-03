@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "yazit"
+name = "scribeflow"
 dynamic = ["version"]
 description = "Portable, resumable, multi-backend Whisper transcription — runs anywhere, resumes after crashes."
 readme = "README.md"
@@ -37,12 +37,12 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/htahaozlu/yazit"
-Repository = "https://github.com/htahaozlu/yazit"
-Issues = "https://github.com/htahaozlu/yazit/issues"
+Homepage = "https://github.com/htahaozlu/scribeflow"
+Repository = "https://github.com/htahaozlu/scribeflow"
+Issues = "https://github.com/htahaozlu/scribeflow/issues"
 
 [project.scripts]
-yazit = "yazit.cli:main"
+scribeflow = "scribeflow.cli:main"
 
 [project.optional-dependencies]
 gpu = []          # torch + CUDA: documented, not hard-pinned (see docs/CONFIG.md)
@@ -60,13 +60,13 @@ dev = [
 ]
 
 [tool.hatch.version]
-path = "src/yazit/__about__.py"
+path = "src/scribeflow/__about__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/yazit"]
+packages = ["src/scribeflow"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/yazit", "tests", "docs", "README.md", "README.tr.md", "LICENSE", "CHANGELOG.md"]
+include = ["src/scribeflow", "tests", "docs", "README.md", "README.tr.md", "LICENSE", "CHANGELOG.md"]
 
 [tool.ruff]
 line-length = 100
@@ -78,7 +78,7 @@ select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF"]
 ignore = ["RUF001", "RUF002", "RUF003"]  # allow Turkish characters in strings/comments
 
 [tool.ruff.lint.isort]
-known-first-party = ["yazit"]
+known-first-party = ["scribeflow"]
 
 [tool.ruff.lint.flake8-bugbear]
 # FastAPI's File/Form/Query/Depends in argument defaults are the idiomatic pattern.
@@ -86,7 +86,7 @@ extend-immutable-calls = ["fastapi.File", "fastapi.Form", "fastapi.Query", "fast
 
 [tool.mypy]
 python_version = "3.10"
-files = ["src/yazit", "tests"]
+files = ["src/scribeflow", "tests"]
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true

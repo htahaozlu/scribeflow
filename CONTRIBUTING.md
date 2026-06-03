@@ -1,6 +1,6 @@
-# Contributing to Yazıt
+# Contributing to ScribeFlow
 
-Thanks for considering a contribution to **Yazıt** (package/CLI: `yazit`) — a
+Thanks for considering a contribution to **ScribeFlow** (package/CLI: `scribeflow`) — a
 portable, resumable, multi-backend Whisper transcription tool. This guide covers
 the dev setup, the checks every change must pass, the conventions we hold to, and
 the few rules that are non-negotiable because they protect the crash-safe resume
@@ -12,8 +12,8 @@ By participating you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## Quick links
 
-- Bugs and feature requests: <https://github.com/htahaozlu/yazit/issues>
-- Questions and ideas: <https://github.com/htahaozlu/yazit/discussions> (see also [SUPPORT.md](SUPPORT.md))
+- Bugs and feature requests: <https://github.com/htahaozlu/scribeflow/issues>
+- Questions and ideas: <https://github.com/htahaozlu/scribeflow/discussions> (see also [SUPPORT.md](SUPPORT.md))
 - Security reports: **do not** open a public issue — see [SECURITY.md](SECURITY.md)
 
 ---
@@ -25,8 +25,8 @@ dependency — for everything from extracting audio to chunking media).
 
 ```bash
 # 1. Fork on GitHub, then clone your fork
-git clone https://github.com/<your-username>/yazit
-cd yazit
+git clone https://github.com/<your-username>/scribeflow
+cd scribeflow
 
 # 2. Create and activate a virtual environment
 python -m venv .venv
@@ -36,7 +36,7 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -e '.[dev]'
 
 # 4. Confirm your host is ready (ffmpeg + device + backends)
-yazit doctor
+scribeflow doctor
 ```
 
 The base install pulls only the pure-Python engine plus the default
@@ -52,7 +52,7 @@ pip install -e '.[dev,openai]'   # openai-whisper reference backend
 ```
 
 > `whisper.cpp` also needs a `whisper-cli` binary and a ggml model on disk;
-> point `YAZIT_WHISPERCPP_BIN` and `YAZIT_WHISPERCPP_MODELS` at them.
+> point `SCRIBEFLOW_WHISPERCPP_BIN` and `SCRIBEFLOW_WHISPERCPP_MODELS` at them.
 > The `[gpu]` extra (torch + CUDA) is documented rather than hard-pinned — see
 > `docs/CONFIG.md` for the install matrix.
 
@@ -127,21 +127,21 @@ Pull-request etiquette:
 
 ---
 
-## 4. Extending Yazıt
+## 4. Extending ScribeFlow
 
-Yazıt is deliberately pluggable along three axes. Each plugin point normalizes to
+ScribeFlow is deliberately pluggable along three axes. Each plugin point normalizes to
 one shared shape so the engine and the resume loop never have to special-case it.
 
 ### Add a backend
 
 A backend turns audio chunks into normalized segments. New backends register in
-`src/yazit/backends/` and must:
+`src/scribeflow/backends/` and must:
 
 1. Implement the backend protocol (transcribe → the **one** normalized segment
    shape every backend returns; look at `faster-whisper` as the reference).
 2. Register in the backend registry with a `KNOWN_BACKENDS` entry, including the
    `extra` name so an unavailable backend yields the right
-   `pip install 'yazit[<extra>]'` hint instead of a crash.
+   `pip install 'scribeflow[<extra>]'` hint instead of a crash.
 3. Declare its dependency under the matching extra in `pyproject.toml`, and add
    the module to the mypy `ignore_missing_imports` override list if it ships no
    type stubs.
@@ -152,7 +152,7 @@ A backend turns audio chunks into normalized segments. New backends register in
 ### Add a source
 
 A source resolves a user-supplied argument into local media paths. Sources live
-in `src/yazit/sources/` and must:
+in `src/scribeflow/sources/` and must:
 
 1. Plug into `infer_kind` (how the argument maps to `local|url|drive|upload`) and
    `resolve_source` (how it materializes local files).
@@ -167,7 +167,7 @@ in `src/yazit/sources/` and must:
 
 A runtime owns the scratch-vs-durable directory split and any bootstrap (mounting
 Drive, picking `/content` scratch on Colab, etc.). Runtimes live in
-`src/yazit/runtime/` and must implement `resolve_dirs` and `bootstrap`, and
+`src/scribeflow/runtime/` and must implement `resolve_dirs` and `bootstrap`, and
 register with `resolve_runtime` so `--runtime auto|local|colab` can pick them.
 
 In every case: keep the normalized output shape, and add tests.
@@ -176,7 +176,7 @@ In every case: keep the normalized output shape, and add tests.
 
 ## 5. The crash-test-first rule (non-negotiable)
 
-Resumability is Yazıt's core promise: kill the process mid-run, re-run the same
+Resumability is ScribeFlow's core promise: kill the process mid-run, re-run the same
 command, and it continues from the last completed chunk with **no duplicated or
 corrupted output**. That guarantee rests on a small, load-bearing mechanism:
 
@@ -207,7 +207,7 @@ test — it is the cheapest insurance we have.
 
 ## 6. Honest scope
 
-To keep reviews focused, a reminder of what Yazıt is and is not:
+To keep reviews focused, a reminder of what ScribeFlow is and is not:
 
 - Local models only in v1 — no cloud transcription APIs.
 - Apple-GPU acceleration is available **only** through whisper.cpp (Metal).
@@ -216,4 +216,4 @@ To keep reviews focused, a reminder of what Yazıt is and is not:
 Changes that respect these boundaries are far easier to land. If you want to push
 one of them, open a discussion first so we can align on direction.
 
-Thank you for helping make Yazıt better.
+Thank you for helping make ScribeFlow better.

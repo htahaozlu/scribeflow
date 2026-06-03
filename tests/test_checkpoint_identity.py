@@ -10,11 +10,11 @@ from pathlib import Path
 
 import pytest
 
+from scribeflow.engine import io_atomic
+from scribeflow.engine.checkpoint import CheckpointIdentityError
+from scribeflow.engine.pipeline import EngineConfig, run_batch
+from scribeflow.engine.types import ChunkingSpec
 from tests.fakes import FakeDeterministicBackend
-from yazit.engine import io_atomic
-from yazit.engine.checkpoint import CheckpointIdentityError
-from yazit.engine.pipeline import EngineConfig, run_batch
-from yazit.engine.types import ChunkingSpec
 
 
 def _config(tmp_path: Path, *, overwrite: bool = False) -> EngineConfig:

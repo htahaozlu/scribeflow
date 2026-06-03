@@ -5,10 +5,10 @@
 -->
 
 <p align="center">
-  <img src="docs/images/logo.png" alt="Yazıt" width="180" />
+  <img src="docs/images/logo.png" alt="ScribeFlow" width="180" />
 </p>
 
-<h1 align="center">Yazıt</h1>
+<h1 align="center">ScribeFlow</h1>
 
 <p align="center">
   <strong>English</strong> | <a href="README.tr.md">Türkçe</a>
@@ -20,16 +20,16 @@
 
 <p align="center">
   Local CPU/GPU, Apple Silicon, or Google Colab. Input from a file, folder, Google Drive,
-  or URL. Yazıt auto-selects the right model for the hardware it finds, writes durable
+  or URL. ScribeFlow auto-selects the right model for the hardware it finds, writes durable
   checkpoints as it goes, and resumes cleanly after a crash — no duplicated or corrupted output.
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/yazit/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/yazit?style=flat-square&color=2F81F7" /></a>
-  <a href="https://pypi.org/project/yazit/"><img alt="Python 3.10–3.12" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-2F81F7?style=flat-square" /></a>
+  <a href="https://pypi.org/project/scribeflow/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/scribeflow?style=flat-square&color=2F81F7" /></a>
+  <a href="https://pypi.org/project/scribeflow/"><img alt="Python 3.10–3.12" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-2F81F7?style=flat-square" /></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-7DCEA0?style=flat-square" /></a>
-  <a href="https://github.com/htahaozlu/yazit/actions"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/htahaozlu/yazit/ci.yml?branch=main&style=flat-square&color=2F81F7" /></a>
-  <a href="https://pypi.org/project/yazit/"><img alt="Downloads" src="https://img.shields.io/pypi/dm/yazit?style=flat-square&color=7DCEA0" /></a>
+  <a href="https://github.com/htahaozlu/scribeflow/actions"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/htahaozlu/scribeflow/ci.yml?branch=main&style=flat-square&color=2F81F7" /></a>
+  <a href="https://pypi.org/project/scribeflow/"><img alt="Downloads" src="https://img.shields.io/pypi/dm/scribeflow?style=flat-square&color=7DCEA0" /></a>
 </p>
 
 <p align="center">
@@ -43,7 +43,7 @@
 ## Demo
 
 <p align="center">
-  <img src="docs/images/demo.gif" alt="Yazıt transcribing a lecture and resuming after a crash" width="720" />
+  <img src="docs/images/demo.gif" alt="ScribeFlow transcribing a lecture and resuming after a crash" width="720" />
 </p>
 
 ---
@@ -54,7 +54,7 @@ Base install is intentionally small — the pure-Python engine plus the default
 **faster-whisper** backend, which runs on CPU out of the box:
 
 ```bash
-pip install yazit
+pip install scribeflow
 ```
 
 ffmpeg is the **one** required system dependency:
@@ -76,20 +76,20 @@ winget install Gyan.FFmpeg
 Optional extras layer in heavier backends, the web UI, and remote sources:
 
 ```bash
-pip install 'yazit[gpu]'      # torch + CUDA (documented, not hard-pinned)
-pip install 'yazit[cpp]'      # whisper.cpp via pywhispercpp — Apple-Silicon Metal path
-pip install 'yazit[openai]'   # openai-whisper (PyTorch reference baseline)
-pip install 'yazit[web]'      # FastAPI web UI: yazit web
-pip install 'yazit[url]'      # yt-dlp — transcribe straight from a URL
-pip install 'yazit[drive]'    # Google Drive API source
-pip install 'yazit[dev]'      # pytest + ruff + mypy + nbformat
+pip install 'scribeflow[gpu]'      # torch + CUDA (documented, not hard-pinned)
+pip install 'scribeflow[cpp]'      # whisper.cpp via pywhispercpp — Apple-Silicon Metal path
+pip install 'scribeflow[openai]'   # openai-whisper (PyTorch reference baseline)
+pip install 'scribeflow[web]'      # FastAPI web UI: scribeflow web
+pip install 'scribeflow[url]'      # yt-dlp — transcribe straight from a URL
+pip install 'scribeflow[drive]'    # Google Drive API source
+pip install 'scribeflow[dev]'      # pytest + ruff + mypy + nbformat
 ```
 
 From a clone (editable, with the dev toolchain):
 
 ```bash
-git clone https://github.com/htahaozlu/yazit
-cd yazit
+git clone https://github.com/htahaozlu/scribeflow
+cd scribeflow
 pip install -e '.[dev]'
 ```
 
@@ -102,22 +102,22 @@ pip install -e '.[dev]'
 ## Quickstart
 
 ```bash
-pip install yazit                       # base install (CPU-capable)
+pip install scribeflow                       # base install (CPU-capable)
 
-yazit doctor                            # check ffmpeg / device / backends
-yazit transcribe ./lecture.mp4          # auto-selects backend + model for this host
-yazit transcribe ./lecture.mp4 --format srt,vtt
+scribeflow doctor                            # check ffmpeg / device / backends
+scribeflow transcribe ./lecture.mp4          # auto-selects backend + model for this host
+scribeflow transcribe ./lecture.mp4 --format srt,vtt
 ```
 
 That's it. The `.txt` transcript is always written; `--format` adds subtitle and
-JSON outputs. If the run is interrupted, re-run the **same command** and Yazıt
+JSON outputs. If the run is interrupted, re-run the **same command** and ScribeFlow
 picks up from the last completed chunk.
 
 ---
 
 ## What it does
 
-Yazıt is a single tool that gives you the same transcription pipeline everywhere:
+ScribeFlow is a single tool that gives you the same transcription pipeline everywhere:
 
 - **Runs anywhere** — local CPU or NVIDIA GPU, Apple Silicon (Metal via whisper.cpp),
   or Google Colab — and adapts to the hardware it detects.
@@ -135,38 +135,38 @@ Yazıt is a single tool that gives you the same transcription pipeline everywher
 ## Backends & hardware
 
 Every backend normalizes to one output shape, so you can swap them without changing
-your workflow. Yazıt auto-selects based on the host; you can always override with
+your workflow. ScribeFlow auto-selects based on the host; you can always override with
 `--backend`, `--model`, `--device`, and `--compute-type`.
 
 | Backend          | Best for                          | Install                       | Notes                                                            |
 | ---------------- | --------------------------------- | ----------------------------- | ---------------------------------------------------------------- |
 | `faster-whisper` | CPU and NVIDIA CUDA (the default) | base install                  | CUDA → `float16` (≥8 GB VRAM) or `int8_float16`; CPU → `int8`.    |
-| `whispercpp`     | Apple Silicon — Metal GPU         | `pip install 'yazit[cpp]'`    | Needs a `whisper-cli` binary + a ggml model (see env vars below). |
-| `openai-whisper` | PyTorch reference baseline        | `pip install 'yazit[openai]'` | The reference implementation; slower, useful for comparison.     |
+| `whispercpp`     | Apple Silicon — Metal GPU         | `pip install 'scribeflow[cpp]'`    | Needs a `whisper-cli` binary + a ggml model (see env vars below). |
+| `openai-whisper` | PyTorch reference baseline        | `pip install 'scribeflow[openai]'` | The reference implementation; slower, useful for comparison.     |
 
 **Hardware auto-select rules:**
 
 - **Apple Silicon** → whisper.cpp on Metal **when its binary is available**, otherwise
-  faster-whisper CPU `int8`. Yazıt **never** offers `cuda`/`mps` to faster-whisper on
+  faster-whisper CPU `int8`. ScribeFlow **never** offers `cuda`/`mps` to faster-whisper on
   macOS-arm64 — that path doesn't exist, so it isn't pretended.
 - **CUDA** → `float16` for ≥8 GB VRAM, otherwise `int8_float16`.
 - **CPU** → `int8`.
 - It **never** auto-selects `tiny`/`base`/`distil` for Turkish; the global default is
   `large-v3-turbo`.
 
-To enable the Apple-Silicon Metal path, point Yazıt at your whisper.cpp binary and
+To enable the Apple-Silicon Metal path, point ScribeFlow at your whisper.cpp binary and
 ggml models:
 
 ```bash
-export YAZIT_WHISPERCPP_BIN=/path/to/whisper-cli
-export YAZIT_WHISPERCPP_MODELS=/path/to/ggml-models
+export SCRIBEFLOW_WHISPERCPP_BIN=/path/to/whisper-cli
+export SCRIBEFLOW_WHISPERCPP_MODELS=/path/to/ggml-models
 ```
 
 See your host's pick at any time:
 
 ```bash
-yazit models           # lists the catalog + this host's auto-pick
-yazit doctor           # ffmpeg / device / VRAM / RAM / backends checklist
+scribeflow models           # lists the catalog + this host's auto-pick
+scribeflow doctor           # ffmpeg / device / VRAM / RAM / backends checklist
 ```
 
 ---
@@ -174,15 +174,15 @@ yazit doctor           # ffmpeg / device / VRAM / RAM / backends checklist
 ## Usage
 
 ```bash
-yazit transcribe <source> [options]
-yazit models      [--want default|speed|quality] [--json] [--ui-lang en|tr]
-yazit doctor      [--json] [--ui-lang en|tr]
-yazit gen-notebook <source> -o nb.ipynb [options]
-yazit web         [--host 127.0.0.1] [--port 8000]
-yazit --version
+scribeflow transcribe <source> [options]
+scribeflow models      [--want default|speed|quality] [--json] [--ui-lang en|tr]
+scribeflow doctor      [--json] [--ui-lang en|tr]
+scribeflow gen-notebook <source> -o nb.ipynb [options]
+scribeflow web         [--host 127.0.0.1] [--port 8000]
+scribeflow --version
 ```
 
-### `yazit transcribe`
+### `scribeflow transcribe`
 
 The source is a local file/folder, a `http(s)://` URL, or a `drive:` path. The kind
 is inferred from the argument; override it with `--source-kind`.
@@ -205,7 +205,7 @@ Key flags:
 | `--runtime auto\|local\|colab`             | Execution target (owns the scratch-vs-durable split).         |
 | `--source-kind local\|url\|drive\|upload`  | Force the source kind instead of inferring it.                |
 | `--overwrite`                              | Discard any existing run and start fresh.                     |
-| `--config FILE`                            | Path to a `yazit.toml`.                                       |
+| `--config FILE`                            | Path to a `scribeflow.toml`.                                       |
 | `--json`                                   | Machine-readable JSON output.                                 |
 | `--ui-lang` / `--lang en\|tr`              | Interface language (separate from `--language`).              |
 
@@ -213,16 +213,16 @@ Examples:
 
 ```bash
 # A whole folder, Turkish, with subtitles
-yazit transcribe ./lectures/ --format srt,vtt
+scribeflow transcribe ./lectures/ --format srt,vtt
 
 # A URL (needs the [url] extra), auto-detect language, quality bias
-yazit transcribe "https://example.com/talk.mp4" -l auto --want quality
+scribeflow transcribe "https://example.com/talk.mp4" -l auto --want quality
 
 # Force a backend/model on capable hardware
-yazit transcribe ./talk.wav --backend faster-whisper --model large-v3 --device cuda --compute-type float16
+scribeflow transcribe ./talk.wav --backend faster-whisper --model large-v3 --device cuda --compute-type float16
 
 # Split scratch vs. durable storage explicitly
-yazit transcribe ./lecture.mp4 --out ./out --workspace /tmp/yazit-scratch
+scribeflow transcribe ./lecture.mp4 --out ./out --workspace /tmp/scribeflow-scratch
 ```
 
 ---
@@ -233,28 +233,28 @@ With the `[web]` extra installed, launch a small FastAPI app to upload media and
 transcribe from the browser:
 
 ```bash
-pip install 'yazit[web]'
-yazit web                                   # http://127.0.0.1:8000
-yazit web --host 0.0.0.0 --port 8080 --out ./out --workspace /tmp/yazit-scratch
+pip install 'scribeflow[web]'
+scribeflow web                                   # http://127.0.0.1:8000
+scribeflow web --host 0.0.0.0 --port 8080 --out ./out --workspace /tmp/scribeflow-scratch
 ```
 
 ---
 
 ## Colab
 
-`yazit gen-notebook` emits a runnable `.ipynb` that mounts Drive, pip-installs Yazıt,
+`scribeflow gen-notebook` emits a runnable `.ipynb` that mounts Drive, pip-installs ScribeFlow,
 transcribes, and resumes — top-to-bottom, no editing required:
 
 ```bash
-yazit gen-notebook ./lecture.mp4 -o yazit_colab.ipynb
-yazit gen-notebook "https://example.com/talk.mp4" -o talk.ipynb        # url extra auto-wired
-yazit gen-notebook "drive:My Drive/lectures/week1.mp4" -o week1.ipynb   # drive extra auto-wired
+scribeflow gen-notebook ./lecture.mp4 -o scribeflow_colab.ipynb
+scribeflow gen-notebook "https://example.com/talk.mp4" -o talk.ipynb        # url extra auto-wired
+scribeflow gen-notebook "drive:My Drive/lectures/week1.mp4" -o week1.ipynb   # drive extra auto-wired
 ```
 
 Open the notebook in Colab and run the cells in order.
 
 **The Errno-107 split.** On Colab, a Google Drive FUSE mount can drop mid-write and
-raise `OSError: [Errno 107] Transport endpoint is not connected`. Yazıt sidesteps this
+raise `OSError: [Errno 107] Transport endpoint is not connected`. ScribeFlow sidesteps this
 by keeping **heavy, churny I/O** (audio chunks, temp files) on local `/content` scratch
 (the `--workspace`), and writing **only durable transcripts and checkpoints** to Drive
 (the `--out`). If the mount blips, your committed transcripts are already safe and the
@@ -278,7 +278,7 @@ Subtitle timecodes are **global**: each chunk's local times are shifted by
 `chunk_index * chunk_seconds`, so timing stays correct across the whole file.
 
 ```bash
-yazit transcribe ./lecture.mp4 --format txt,srt,vtt,json
+scribeflow transcribe ./lecture.mp4 --format txt,srt,vtt,json
 ```
 
 ---
@@ -290,7 +290,7 @@ Resume isn't a bolt-on — it's how the engine runs.
 - **Chunk-by-chunk checkpoints.** The media is split into chunks; each completed chunk
   is committed durably to `progress.json` + `chunk_outputs/`, using
   **atomic temp-then-replace** writes (never a half-written file).
-- **Just re-run.** Kill the process and run the **same command** again → Yazıt resumes
+- **Just re-run.** Kill the process and run the **same command** again → ScribeFlow resumes
   from the last completed chunk. No duplicated work, no corrupted output.
 - **RunIdentity guard.** A resume refuses to silently mix a *different*
   backend/model/chunking/options into an existing run — it raises
@@ -304,22 +304,22 @@ Determinism makes this safe: Turkish defaults use `temperature=0.0`,
 
 ## Config
 
-Configuration resolves from CLI flags → a `yazit.toml` → environment variables, with
+Configuration resolves from CLI flags → a `scribeflow.toml` → environment variables, with
 sensible defaults underneath. Full reference: **[docs/CONFIG.md](docs/CONFIG.md)**.
 
 Common environment variables:
 
 | Variable                  | Purpose                                           |
 | ------------------------- | ------------------------------------------------- |
-| `YAZIT_LANG`              | Default interface language (`en` / `tr`).         |
-| `YAZIT_WHISPERCPP_BIN`    | Path to the `whisper-cli` binary (Apple Silicon). |
-| `YAZIT_WHISPERCPP_MODELS` | Directory holding ggml models for whisper.cpp.    |
+| `SCRIBEFLOW_LANG`              | Default interface language (`en` / `tr`).         |
+| `SCRIBEFLOW_WHISPERCPP_BIN`    | Path to the `whisper-cli` binary (Apple Silicon). |
+| `SCRIBEFLOW_WHISPERCPP_MODELS` | Directory holding ggml models for whisper.cpp.    |
 | `NO_COLOR`                | Disable ANSI colors (also auto-off when piped).   |
 
-A project-local `yazit.toml` lets you pin defaults:
+A project-local `scribeflow.toml` lets you pin defaults:
 
 ```toml
-# yazit.toml
+# scribeflow.toml
 backend = "faster-whisper"
 model = "large-v3-turbo"
 language = "tr"
@@ -329,7 +329,7 @@ formats = ["txt", "srt"]
 ```
 
 ```bash
-yazit transcribe ./lecture.mp4 --config yazit.toml
+scribeflow transcribe ./lecture.mp4 --config scribeflow.toml
 ```
 
 ---

@@ -1,5 +1,5 @@
 <!--
-  Thanks for contributing to Yazıt!
+  Thanks for contributing to ScribeFlow!
   Keep the change focused and explain the "why", not just the "what".
 -->
 
@@ -43,8 +43,8 @@
     pip install -e '.[dev]'
     pytest -q
     ruff check . && mypy
-    yazit doctor
-    yazit transcribe ./sample.mp4 --format srt,vtt
+    scribeflow doctor
+    scribeflow transcribe ./sample.mp4 --format srt,vtt
 -->
 
 - [ ] `pytest -q` passes
@@ -59,7 +59,7 @@
 ## Resume / durability impact
 
 <!--
-  Yazıt is crash-safe and resumable. If this PR touches the engine, checkpoints,
+  ScribeFlow is crash-safe and resumable. If this PR touches the engine, checkpoints,
   RunIdentity, chunking, or any default option, explain the impact on resume.
   Otherwise write "n/a".
 -->

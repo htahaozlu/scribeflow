@@ -1,12 +1,12 @@
 name: Feature request
-description: Suggest a new capability or an improvement to Yazıt.
+description: Suggest a new capability or an improvement to ScribeFlow.
 title: "[Feature]: "
 labels: ["enhancement", "triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for helping make Yazıt better! Please describe the problem you are
+        Thanks for helping make ScribeFlow better! Please describe the problem you are
         trying to solve first — that helps us find the right solution, which may
         differ from the one you have in mind.
 
@@ -32,9 +32,9 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: What would you like Yazıt to do? A CLI flag, a new backend, a new output format, etc.
+      description: What would you like ScribeFlow to do? A CLI flag, a new backend, a new output format, etc.
       placeholder: |
-        Add a `--foo` flag to `yazit transcribe` that ...
+        Add a `--foo` flag to `scribeflow transcribe` that ...
     validations:
       required: true
 
@@ -42,7 +42,7 @@ body:
     id: area
     attributes:
       label: Area
-      description: Which part of Yazıt does this relate to?
+      description: Which part of ScribeFlow does this relate to?
       options:
         - CLI / commands
         - Engine / resume / checkpoints

@@ -14,18 +14,18 @@ from pathlib import Path
 
 import pytest
 
-from tests.fakes import AtomicWriteCrasher, CrashInjected, FakeDeterministicBackend
-from yazit.engine import io_atomic
-from yazit.engine.checkpoint import identities_match, identity_to_dict
-from yazit.engine.pipeline import EngineConfig, run_batch
-from yazit.engine.text import build_full_transcript
-from yazit.engine.types import (
+from scribeflow.engine import io_atomic
+from scribeflow.engine.checkpoint import identities_match, identity_to_dict
+from scribeflow.engine.pipeline import EngineConfig, run_batch
+from scribeflow.engine.text import build_full_transcript
+from scribeflow.engine.types import (
     BackendFingerprint,
     ChunkingSpec,
     FileSignature,
     RunIdentity,
     TranscribeOptions,
 )
+from tests.fakes import AtomicWriteCrasher, CrashInjected, FakeDeterministicBackend
 
 N_CHUNKS = 3
 

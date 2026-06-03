@@ -13,8 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from yazit.engine import io_atomic
-from yazit.engine.types import (
+from scribeflow.engine import io_atomic
+from scribeflow.engine.types import (
     BackendFingerprint,
     ChunkRequest,
     TranscriptionResult,

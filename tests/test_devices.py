@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from yazit import devices
+from scribeflow import devices
 
 
 def test_apple_silicon_is_cpu_int8(monkeypatch) -> None:

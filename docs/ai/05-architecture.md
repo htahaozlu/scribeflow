@@ -4,11 +4,11 @@
 > checkpoint loop verbatim; make ONLY the backend / source / runtime seams pluggable.** The
 > pipeline owns all checkpoint files; adapters normalize data and never touch disk state.
 
-## 1. Package layout (`src/yazit/`)
+## 1. Package layout (`src/scribeflow/`)
 
 ```
-src/yazit/
-  __about__.py                 # APP_NAME="Yazıt", __version__, slug="yazit"  (single name token)
+src/scribeflow/
+  __about__.py                 # APP_NAME="ScribeFlow", __version__, slug="scribeflow"  (single name token)
   engine/                      # PORTED from drive_batch_transcriber.py — behavior frozen (doc 02)
     types.py                   # all dataclasses below (§2) — the shared vocabulary
     io_atomic.py               # read_json, write_json, write_text, append_log, timestamp, format_seconds
@@ -33,7 +33,7 @@ src/yazit/
     base.py local.py colab.py
     remote.py                  # DEFERRED: interface stub only (v1 cut)
   config.py                    # layered: defaults <- file(toml/yaml) <- env <- cli/ui -> BatchConfig
-  cli.py                       # `yazit transcribe|models|doctor|gen-notebook|web`
+  cli.py                       # `scribeflow transcribe|models|doctor|gen-notebook|web`
   notebook/
     generator.py               # generate_colab_notebook(config) -> .ipynb (replaces build_colab_bundle.py)
     template.ipynb.j2
@@ -211,19 +211,19 @@ else faster-whisper CPU int8 with a warning. `--model/--backend/--compute-type` 
 
 `notebook/generator.py: generate_colab_notebook(config) -> Path(.ipynb)` renders `template.ipynb.j2`
 into cells: (1) `drive.mount(force_remount=True)`, (2) config (BUNDLE/SOURCE + `workspace_dir` local
-`/content`, `output_dir` Drive — the Errno-107 split baked in), (3) `pip install yazit[...]`,
-(4) run `yazit transcribe`/`run_batch`. One template, parameterized — no per-set duplication.
+`/content`, `output_dir` Drive — the Errno-107 split baked in), (3) `pip install scribeflow[...]`,
+(4) run `scribeflow transcribe`/`run_batch`. One template, parameterized — no per-set duplication.
 
 ## 8. CLI surface (D1)
 
 ```
-yazit transcribe <source> [--backend ...] [--model ...] [--compute-type ...]
+scribeflow transcribe <source> [--backend ...] [--model ...] [--compute-type ...]
                  [--lang tr] [--chunk-minutes 20] [--out DIR] [--workspace DIR]
                  [--format txt,srt,vtt,json] [--overwrite] [--json]
-yazit models            # list models + show auto-selection for THIS machine
-yazit doctor            # ffmpeg? device? VRAM/RAM? backend availability? -> checklist
-yazit gen-notebook <source> [--drive] [-o nb.ipynb]
-yazit web [--host --port]   # [web] extra
+scribeflow models            # list models + show auto-selection for THIS machine
+scribeflow doctor            # ffmpeg? device? VRAM/RAM? backend availability? -> checklist
+scribeflow gen-notebook <source> [--drive] [-o nb.ipynb]
+scribeflow web [--host --port]   # [web] extra
 ```
 Respect `NO_COLOR`, auto-disable color when piped, `--json` machine output, `--lang en|tr`.
 
@@ -241,7 +241,7 @@ Respect `NO_COLOR`, auto-disable color when piped, `--json` machine output, `--l
 ## 9. Web UI (D1, optional [web] extra)
 
 FastAPI wrapping the SAME pipeline. One calm page: pick/upload source → auto-or-choose model
-(show `yazit models` result) → start → **live progress by polling `progress.json` + tailing
+(show `scribeflow models` result) → start → **live progress by polling `progress.json` + tailing
 `activity.log`** (the checkpoint files are purpose-built for this) → download txt/srt/vtt. No
 business logic in the UI; it only drives `run_batch` and reads checkpoint files.
 

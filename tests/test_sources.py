@@ -14,11 +14,11 @@ from pathlib import Path
 
 import pytest
 
-from yazit.engine.types import RuntimeDirs, SourceSpec
-from yazit.sources.base import infer_kind, resolve_source
-from yazit.sources.drive import DriveSource
-from yazit.sources.local import LocalSource
-from yazit.sources.upload import UploadSource
+from scribeflow.engine.types import RuntimeDirs, SourceSpec
+from scribeflow.sources.base import infer_kind, resolve_source
+from scribeflow.sources.drive import DriveSource
+from scribeflow.sources.local import LocalSource
+from scribeflow.sources.upload import UploadSource
 
 
 def _dirs(tmp_path: Path) -> RuntimeDirs:
@@ -113,7 +113,7 @@ def http_base(fixtures_dir: Path) -> Iterator[str]:
     importlib.util.find_spec("yt_dlp") is None, reason="yt-dlp ([url] extra) not installed"
 )
 def test_url_source_downloads_into_workspace(http_base: str, tmp_path: Path) -> None:
-    from yazit.sources.url import UrlSource
+    from scribeflow.sources.url import UrlSource
 
     dirs = _dirs(tmp_path)
     spec = SourceSpec(kind="url", uri=f"{http_base}/sample_5s.mp4")

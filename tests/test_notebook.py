@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from yazit.cli import main
-from yazit.notebook.generator import (
+from scribeflow.cli import main
+from scribeflow.notebook.generator import (
     NotebookSpec,
     build_notebook,
     generate_colab_notebook,
@@ -23,9 +23,9 @@ def _cell_texts(nb: dict) -> list[str]:
 
 
 def test_pip_target() -> None:
-    assert pip_target(()) == "yazit"
-    assert pip_target(("url",)) == "yazit[url]"
-    assert pip_target(("url", "drive")) == "yazit[url,drive]"
+    assert pip_target(()) == "scribeflow"
+    assert pip_target(("url",)) == "scribeflow[url]"
+    assert pip_target(("url", "drive")) == "scribeflow[url,drive]"
 
 
 def test_no_unrendered_placeholders() -> None:
@@ -45,10 +45,10 @@ def test_notebook_has_proven_flow_in_order() -> None:
     run_i = next(i for i, s in enumerate(srcs) if "subprocess.run" in s)
     assert mount_i < install_i < run_i  # mount → install → transcribe
 
-    assert "yazit[url]" in joined  # url extra baked into the pip target
+    assert "scribeflow[url]" in joined  # url extra baked into the pip target
     assert "https://youtu.be/abc" in joined  # source baked in
     # the Errno-107 split is visible in the config cell
-    assert "/content/yazit-workspace" in joined  # local scratch
+    assert "/content/scribeflow-workspace" in joined  # local scratch
     assert "/content/drive/MyDrive" in joined  # durable Drive output
     assert "'colab'" in joined  # --runtime colab
 
@@ -74,7 +74,7 @@ def test_generated_notebook_passes_nbformat_validate(tmp_path: Path) -> None:
 def test_cli_gen_notebook_url(tmp_path: Path) -> None:
     out = tmp_path / "out.ipynb"
     assert main(["gen-notebook", "https://youtu.be/abc", "-o", str(out)]) == 0
-    assert "yazit[url]" in out.read_text(encoding="utf-8")  # url source → url extra
+    assert "scribeflow[url]" in out.read_text(encoding="utf-8")  # url source → url extra
 
 
 def test_cli_gen_notebook_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:

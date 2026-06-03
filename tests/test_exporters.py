@@ -8,10 +8,9 @@ from pathlib import Path
 
 import pytest
 
-from tests.fakes import FakeDeterministicBackend
-from yazit.backends import registry
-from yazit.cli import main
-from yazit.engine.exporters import (
+from scribeflow.backends import registry
+from scribeflow.cli import main
+from scribeflow.engine.exporters import (
     ExportedSegment,
     _timestamp,
     export,
@@ -19,8 +18,9 @@ from yazit.engine.exporters import (
     to_srt,
     to_vtt,
 )
-from yazit.engine.pipeline import EngineConfig, run_batch
-from yazit.engine.types import ChunkingSpec
+from scribeflow.engine.pipeline import EngineConfig, run_batch
+from scribeflow.engine.types import ChunkingSpec
+from tests.fakes import FakeDeterministicBackend
 
 
 def test_timestamp_formats() -> None:
@@ -92,7 +92,7 @@ def test_export_validates_before_writing_any_file(sample_video: Path, tmp_path: 
 
 
 def test_chunk_seconds_falls_back_to_summary(sample_video: Path, tmp_path: Path) -> None:
-    from yazit.engine.exporters import _chunk_seconds
+    from scribeflow.engine.exporters import _chunk_seconds
 
     video_dir = _run(sample_video, tmp_path)
     (video_dir / "progress.json").write_text("{}", encoding="utf-8")  # lose chunking here

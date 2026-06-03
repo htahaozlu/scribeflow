@@ -7,21 +7,21 @@ from pathlib import Path
 
 import pytest
 
+from scribeflow.engine import pipeline
+from scribeflow.engine.pipeline import EngineConfig, run_batch
+from scribeflow.engine.types import ChunkingSpec
+from scribeflow.runtime.base import resolve_runtime
+from scribeflow.runtime.colab import ColabRuntime
+from scribeflow.runtime.local import LocalRuntime
+from scribeflow.runtime.remote import RemoteRuntime
 from tests.fakes import FakeDeterministicBackend
-from yazit.engine import pipeline
-from yazit.engine.pipeline import EngineConfig, run_batch
-from yazit.engine.types import ChunkingSpec
-from yazit.runtime.base import resolve_runtime
-from yazit.runtime.colab import ColabRuntime
-from yazit.runtime.local import LocalRuntime
-from yazit.runtime.remote import RemoteRuntime
 
 
 def test_local_runtime_defaults_and_overrides(tmp_path: Path) -> None:
     rt = LocalRuntime()
     default = rt.resolve_dirs(None, None, None)
-    assert default.output_dir == Path("yazit-output")
-    assert default.workspace_dir == Path("yazit-workspace")
+    assert default.output_dir == Path("scribeflow-output")
+    assert default.workspace_dir == Path("scribeflow-workspace")
 
     explicit = rt.resolve_dirs(tmp_path / "o", tmp_path / "w", tmp_path / "c")
     assert explicit.output_dir == tmp_path / "o"
@@ -55,9 +55,9 @@ def test_remote_runtime_is_stub() -> None:
 def test_resolve_runtime_selection(monkeypatch: pytest.MonkeyPatch) -> None:
     assert resolve_runtime("local").name == "local"
     assert resolve_runtime("colab").name == "colab"
-    monkeypatch.setattr("yazit.devices.detect_colab", lambda: True)
+    monkeypatch.setattr("scribeflow.devices.detect_colab", lambda: True)
     assert resolve_runtime(None).name == "colab"
-    monkeypatch.setattr("yazit.devices.detect_colab", lambda: False)
+    monkeypatch.setattr("scribeflow.devices.detect_colab", lambda: False)
     assert resolve_runtime(None).name == "local"
 
 

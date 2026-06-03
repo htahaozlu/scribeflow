@@ -2,7 +2,7 @@
 
 ## Product
 
-**Yazıt** is a portable, resumable, multi-backend Whisper transcription tool. You point it at media
+**ScribeFlow** is a portable, resumable, multi-backend Whisper transcription tool. You point it at media
 (file, folder, Drive, or URL), it detects your hardware, picks the right model, and produces clean
 transcripts — surviving crashes and disconnects by resuming exactly where it stopped. Runs as a CLI
 or a small local web UI; can generate a ready-to-run Colab notebook for GPU-less users.
@@ -18,7 +18,7 @@ or a small local web UI; can generate a ready-to-run Colab notebook for GPU-less
 
 | # | Decision | Choice | Implication |
 |---|----------|--------|-------------|
-| D1 | **Interface** | **CLI + optional web UI** | Ship a strong CLI first; add a minimal FastAPI web UI behind a `[web]` extra and `yazit web` / `--serve`. |
+| D1 | **Interface** | **CLI + optional web UI** | Ship a strong CLI first; add a minimal FastAPI web UI behind a `[web]` extra and `scribeflow web` / `--serve`. |
 | D2 | **Distribution** | **pip / PyPI** (CLI core) + optional web UI extra | `pyproject.toml`, console entry point, extras: `[gpu] [cpp] [openai] [web] [url] [drive] [dev]`. No Docker/binary required for v1. |
 | D3 | **Engine scope** | **Pluggable LOCAL backends**: faster-whisper (default) + whisper.cpp + openai-whisper | Backend Protocol unifies all three (doc 05). **No cloud APIs** (Groq/OpenAI hosted) in v1 scope. |
 | D4 | **Repo strategy** | **New repo, preserve the proven core** | Greenfield package; lift the engine verbatim; archive the old Colab/zip flow. New Apache-2.0 repo, context-bar conventions. |
@@ -52,10 +52,10 @@ or a small local web UI; can generate a ready-to-run Colab notebook for GPU-less
 
 ## Success criteria (v1 "done")
 
-- `pip install yazit && yazit transcribe ./video.mp4` works on Linux/macOS/Colab with zero config.
+- `pip install scribeflow && scribeflow transcribe ./video.mp4` works on Linux/macOS/Colab with zero config.
 - Auto-selected model matches detected hardware; `--model`/`--backend` override always wins.
 - Kill the process mid-run, re-run the same command → resumes, no duplicated or corrupted output (covered by a crash-injection test).
-- `yazit gen-notebook --source drive --input <folder>` emits a runnable Colab `.ipynb` that mirrors the proven flow.
-- `yazit web` serves the UI; a non-technical user transcribes a file end-to-end without the terminal.
+- `scribeflow gen-notebook --source drive --input <folder>` emits a runnable Colab `.ipynb` that mirrors the proven flow.
+- `scribeflow web` serves the UI; a non-technical user transcribes a file end-to-end without the terminal.
 - Outputs: `.txt` always; `.srt`/`.vtt`/`.json` on request (segment data already captured per chunk).
 - Apache-2.0, bilingual README, CI publishes to PyPI on a SemVer tag.

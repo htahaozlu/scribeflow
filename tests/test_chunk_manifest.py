@@ -11,9 +11,9 @@ import json
 import wave
 from pathlib import Path
 
-from yazit.engine import io_atomic
-from yazit.engine.chunking import prepare_audio_chunks
-from yazit.engine.types import ChunkingSpec
+from scribeflow.engine import io_atomic
+from scribeflow.engine.chunking import prepare_audio_chunks
+from scribeflow.engine.types import ChunkingSpec
 
 SPEC = ChunkingSpec(chunk_seconds=2)
 

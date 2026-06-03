@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from yazit import devices, model_policy
-from yazit.devices import HostInfo
+from scribeflow import devices, model_policy
+from scribeflow.devices import HostInfo
 
 
 @pytest.mark.parametrize(
@@ -105,7 +105,9 @@ def test_auto_select_apple_silicon_routes_to_whispercpp_when_preferred(monkeypat
 
 def test_auto_select_apple_routes_to_whispercpp_when_binary_available(monkeypatch) -> None:
     _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
-    monkeypatch.setattr("yazit.backends.registry.is_available", lambda name: name == "whispercpp")
+    monkeypatch.setattr(
+        "scribeflow.backends.registry.is_available", lambda name: name == "whispercpp"
+    )
     res = model_policy.auto_select()  # no explicit backend, no prefer flag
     assert res.backend == "whispercpp"
     assert res.device == "metal"
@@ -114,7 +116,7 @@ def test_auto_select_apple_routes_to_whispercpp_when_binary_available(monkeypatc
 
 def test_auto_select_apple_falls_back_to_faster_whisper_without_binary(monkeypatch) -> None:
     _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
-    monkeypatch.setattr("yazit.backends.registry.is_available", lambda name: False)
+    monkeypatch.setattr("scribeflow.backends.registry.is_available", lambda name: False)
     res = model_policy.auto_select()
     assert res.backend == "faster-whisper"
     assert res.device == "cpu"  # never cuda/mps for faster-whisper on Apple Silicon

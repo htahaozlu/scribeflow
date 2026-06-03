@@ -17,16 +17,16 @@ from pathlib import Path
 
 import pytest
 
+from scribeflow.engine import io_atomic
+from scribeflow.engine.pipeline import EngineConfig, run_batch
+from scribeflow.engine.text import build_full_transcript
+from scribeflow.engine.types import ChunkingSpec
 from tests.fakes import (
     AtomicWriteCrasher,
     CrashInjected,
     FakeDeterministicBackend,
     ReplaceCrasher,
 )
-from yazit.engine import io_atomic
-from yazit.engine.pipeline import EngineConfig, run_batch
-from yazit.engine.text import build_full_transcript
-from yazit.engine.types import ChunkingSpec
 
 N_CHUNKS = 3  # 5s fixture / 2s chunk length
 

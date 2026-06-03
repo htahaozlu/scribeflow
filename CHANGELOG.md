@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **Yazıt** are documented here.
+All notable changes to **ScribeFlow** are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -23,7 +23,7 @@ that runs anywhere and resumes after crashes.
 - **Multiple backends** behind one normalized shape:
   - `faster-whisper` (default; CPU and NVIDIA CUDA).
   - `whisper.cpp` (Apple-Silicon Metal path) via a `whisper-cli` binary + a ggml
-    model, configured with `YAZIT_WHISPERCPP_BIN` / `YAZIT_WHISPERCPP_MODELS`.
+    model, configured with `SCRIBEFLOW_WHISPERCPP_BIN` / `SCRIBEFLOW_WHISPERCPP_MODELS`.
   - `openai-whisper` (PyTorch reference baseline).
 - **Hardware-aware model auto-select** — picks backend/model/device/compute-type
   for the detected host (Apple Silicon → whisper.cpp Metal when available, else
@@ -36,19 +36,19 @@ that runs anywhere and resumes after crashes.
 - **Sources**: local file/folder, `url` (yt-dlp), `drive` (mounted Google Drive
   path), and `upload` (web UI). Kind inferred from the argument or forced with
   `--source-kind`.
-- **Colab notebook generator** (`yazit gen-notebook`) — emits a runnable
+- **Colab notebook generator** (`scribeflow gen-notebook`) — emits a runnable
   `.ipynb` (mount Drive → pip install → transcribe → resume), with the Errno-107
   scratch-vs-durable split (heavy I/O on local `/content`, durable transcripts on
   Drive).
 - **Exporters** — `.txt` transcript always written; `.srt`, `.vtt`, and `.json`
   via `--format`, with global subtitle timecodes shifted per chunk.
-- **Web UI** (`yazit web`, `[web]` extra) — FastAPI app for uploads and runs.
-- **Layered configuration** — `defaults < yazit.toml < YAZIT_* env < CLI`, with
+- **Web UI** (`scribeflow web`, `[web]` extra) — FastAPI app for uploads and runs.
+- **Layered configuration** — `defaults < scribeflow.toml < SCRIBEFLOW_* env < CLI`, with
   `[output]` / `[backend]` / `[transcribe]` / `[ui]` TOML sections and clean
   config-error messages instead of tracebacks. See `docs/CONFIG.md`.
 - **Turkish-tuned defaults** — `language=tr`, `vad_filter=True`, `beam_size=5`,
   `temperature=0.0` (deterministic, enabling safe resume), and a tail-prompt
   continuity hint with `condition_on_previous_text=False`.
 
-[Unreleased]: https://github.com/htahaozlu/yazit/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/htahaozlu/yazit/releases/tag/v0.1.0
+[Unreleased]: https://github.com/htahaozlu/scribeflow/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/htahaozlu/scribeflow/releases/tag/v0.1.0

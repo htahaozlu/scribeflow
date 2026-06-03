@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Yazıt is pre-1.0; security fixes land on the latest `0.1.x` release.
+ScribeFlow is pre-1.0; security fixes land on the latest `0.1.x` release.
 
 | Version | Supported |
 | ------- | --------- |
@@ -14,7 +14,7 @@ Yazıt is pre-1.0; security fixes land on the latest `0.1.x` release.
 Please report suspected vulnerabilities **privately** — do not open a public issue
 for a security problem.
 
-- Use GitHub's [private vulnerability reporting](https://github.com/htahaozlu/yazit/security/advisories/new)
+- Use GitHub's [private vulnerability reporting](https://github.com/htahaozlu/scribeflow/security/advisories/new)
   ("Report a vulnerability" under the repository's *Security* tab), or
 - Contact the repository owner **@htahaozlu** directly.
 
@@ -25,7 +25,7 @@ timeline with you.
 
 ## Threat model & scope
 
-Yazıt is a **local** tool. It is the right lens for triaging reports:
+ScribeFlow is a **local** tool. It is the right lens for triaging reports:
 
 - The core engine reads media files and writes transcripts/checkpoints on the local
   filesystem. It performs **no network egress** on its own.
@@ -36,7 +36,7 @@ Yazıt is a **local** tool. It is the right lens for triaging reports:
 - The `[web]` UI binds to `127.0.0.1` by default. It is intended for local,
   single-user use; **do not expose it to an untrusted network** without your own
   authentication/proxy in front of it.
-- `ffmpeg` (required) and `yt-dlp` (`[url]`) are external programs Yazıt invokes;
+- `ffmpeg` (required) and `yt-dlp` (`[url]`) are external programs ScribeFlow invokes;
   keep them updated, as their own advisories apply.
 
 In scope: path traversal, unsafe file handling, command/argument injection,

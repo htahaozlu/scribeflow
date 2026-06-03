@@ -1,4 +1,4 @@
-# AI Design Docs — Portable Transcription Tool (working name: **Yazıt** / `yazit`)
+# AI Design Docs — Portable Transcription Tool (working name: **ScribeFlow** / `scribeflow`)
 
 > These documents are the **high-signal context** for an AI implementation team (multi-agent
 > dynamic workflow) that will build a portable, resumable, multi-backend audio/video
@@ -35,13 +35,13 @@ and is the asset we carry forward. Sibling open-source project by the same owner
 
 ## Working name (owner finalizes)
 
-Primary recommendation: **Yazıt** (Turkish: *inscription / epigraph* — short, evocative, fits a
-transcription tool, keeps the Turkish-academic identity). Package/CLI slug: **`yazit`** (ASCII).
+Primary recommendation: **ScribeFlow** (Turkish: *inscription / epigraph* — short, evocative, fits a
+transcription tool, keeps the Turkish-academic identity). Package/CLI slug: **`scribeflow`** (ASCII).
 Alternatives to consider: `desifre` (TR "deşifre" = to transcribe audio), `scribeflow`, `reescribe`.
 
-**For the implementation team:** treat `Yazıt` / `yazit` as a **single find-and-replace token**.
-Use `yazit` for the Python package, console script, and PyPI name; `Yazıt` for display/README.
-Do not scatter the name into logic — read it from one constant (`yazit.__about__.APP_NAME`).
+**For the implementation team:** treat `ScribeFlow` / `scribeflow` as a **single find-and-replace token**.
+Use `scribeflow` for the Python package, console script, and PyPI name; `ScribeFlow` for display/README.
+Do not scatter the name into logic — read it from one constant (`scribeflow.__about__.APP_NAME`).
 
 ## Glossary (used across all docs)
 

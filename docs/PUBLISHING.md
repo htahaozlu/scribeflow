@@ -1,6 +1,6 @@
 # Publishing to PyPI
 
-Yazıt publishes to PyPI automatically from CI using **OIDC trusted publishing** —
+ScribeFlow publishes to PyPI automatically from CI using **OIDC trusted publishing** —
 no long-lived API token is stored anywhere. The flow is driven entirely by a
 SemVer git tag.
 
@@ -56,7 +56,7 @@ GitHub OIDC token for a one-time PyPI upload credential. Benefits:
 ## First-time PyPI trusted-publisher setup
 
 Do this **once**, before the first real release. The project owner is
-`htahaozlu`; the repo is <https://github.com/htahaozlu/yazit>.
+`htahaozlu`; the repo is <https://github.com/htahaozlu/scribeflow>.
 
 ### 1. Create the project's trusted publisher on PyPI
 
@@ -67,9 +67,9 @@ the very first upload can create the project:
 2. Go to **Account → Publishing** (Manage account → Publishing), under
    *"Add a new pending publisher"*.
 3. Fill in exactly:
-   - **PyPI Project Name**: `yazit`
+   - **PyPI Project Name**: `scribeflow`
    - **Owner**: `htahaozlu`
-   - **Repository name**: `yazit`
+   - **Repository name**: `scribeflow`
    - **Workflow name**: `publish.yml`
    - **Environment name**: `pypi`
 4. Save. Once the first publish succeeds, the project exists and the pending
@@ -77,7 +77,7 @@ the very first upload can create the project:
 
 > If the project already exists on PyPI, add the publisher from the project page
 > instead: **Manage project → Settings → Publishing → Add a publisher**, with the
-> same four values (owner `htahaozlu`, repo `yazit`, workflow `publish.yml`,
+> same four values (owner `htahaozlu`, repo `scribeflow`, workflow `publish.yml`,
 > environment `pypi`).
 
 ### 2. Create the `pypi` GitHub Environment
@@ -106,13 +106,13 @@ After the GitHub Release is published:
 1. Watch the **publish** workflow in the repo's **Actions** tab — it should be
    green, with the upload step reporting success (or *skipped existing* on a
    re-run).
-2. Confirm the new version on PyPI: <https://pypi.org/project/yazit/>.
+2. Confirm the new version on PyPI: <https://pypi.org/project/scribeflow/>.
 3. Smoke-test the published artifact from a clean environment:
 
    ```bash
-   python -m venv /tmp/yazit-check && /tmp/yazit-check/bin/pip install yazit
-   /tmp/yazit-check/bin/yazit --version   # should print: yazit X.Y.Z
-   /tmp/yazit-check/bin/yazit doctor
+   python -m venv /tmp/scribeflow-check && /tmp/scribeflow-check/bin/pip install scribeflow
+   /tmp/scribeflow-check/bin/scribeflow --version   # should print: scribeflow X.Y.Z
+   /tmp/scribeflow-check/bin/scribeflow doctor
    ```
 
 If `publish.yml` fails with an authentication/permissions error, re-check that

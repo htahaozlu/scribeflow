@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ScribeFlow</title>
+  <style>
+    :root { --accent: #2F81F7; --ink: #1c2128; --muted: #6e7781; --line: #e6e8eb; --bg: #fbfcfd; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+      display: flex; justify-content: center; padding: 6vh 20px;
+    }
+    main { width: 100%; max-width: 560px; }
+    header { text-align: center; margin-bottom: 2.5rem; }
+    h1 { font-size: 2.4rem; letter-spacing: -.02em; margin: 0; }
+    .sub { color: var(--muted); margin-top: .4rem; }
+    .card {
+      background: #fff; border: 1px solid var(--line); border-radius: 14px;
+      padding: 1.6rem; margin-bottom: 1.2rem;
+    }
+    label { display: block; font-size: .82rem; color: var(--muted); margin: .9rem 0 .3rem; text-transform: uppercase; letter-spacing: .04em; }
+    input[type=file], input[type=text], select {
+      width: 100%; padding: .6rem .7rem; border: 1px solid var(--line);
+      border-radius: 9px; font: inherit; background: #fff;
+    }
+    .row { display: flex; gap: .8rem; }
+    .row > div { flex: 1; }
+    button {
+      margin-top: 1.4rem; width: 100%; padding: .8rem; border: 0; border-radius: 10px;
+      background: var(--accent); color: #fff; font: 600 1rem inherit; cursor: pointer;
+      transition: opacity .15s ease;
+    }
+    button:disabled { opacity: .5; cursor: default; }
+    .pick { font-size: .82rem; color: var(--muted); margin-top: .4rem; }
+    .pick b { color: var(--accent); }
+    .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+    .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .4s ease; }
+    .status { display: flex; justify-content: space-between; font-size: .9rem; margin-bottom: .6rem; }
+    .log { font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted);
+      background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: .7rem;
+      margin-top: 1rem; max-height: 160px; overflow: auto; white-space: pre-wrap; }
+    .downloads a {
+      display: inline-block; margin: .8rem .5rem 0 0; padding: .4rem .9rem; border-radius: 8px;
+      border: 1px solid var(--accent); color: var(--accent); text-decoration: none; font-size: .9rem;
+    }
+    .hidden { display: none; }
+    footer { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>ScribeFlow</h1>
+      <div class="sub">Portable, resumable transcription</div>
+    </header>
+
+    <form id="form" class="card">
+      <label>Media file</label>
+      <input type="file" id="file" accept="audio/*,video/*" />
+      <div class="pick" id="pick">Model: <b id="model">auto</b> · <span id="host"></span></div>
+
+      <div class="row">
+        <div>
+          <label>Language</label>
+          <input type="text" id="language" value="tr" />
+        </div>
+        <div>
+          <label>Chunk (min)</label>
+          <input type="text" id="chunk" value="20" />
+        </div>
+        <div>
+          <label>Formats</label>
+          <select id="formats">
+            <option value="txt,srt">txt + srt</option>
+            <option value="txt">txt</option>
+            <option value="txt,srt,vtt,json">all</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" id="go">Transcribe</button>
+    </form>
+
+    <section id="progress" class="card hidden">
+      <div class="status"><span id="state">Starting…</span><span id="pct">0%</span></div>
+      <div class="bar"><i id="fill"></i></div>
+      <div class="downloads" id="downloads"></div>
+      <div class="log" id="log"></div>
+    </section>
+
+    <footer>Local models · no cloud · ffmpeg required</footer>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let pollTimer = null;
+
+    fetch('/api/models').then(r => r.json()).then(m => {
+      $('model').textContent = m.auto_select.backend + ' / ' + m.auto_select.model;
+      $('host').textContent = m.host.device + '/' + m.host.compute_type;
+    }).catch(() => {});
+
+    $('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData();
+      const f = $('file').files[0];
+      if (!f) { alert('Pick a media file first.'); return; }
+      fd.append('file', f);
+      fd.append('language', $('language').value || 'tr');
+      fd.append('chunk_minutes', $('chunk').value || '20');
+      fd.append('formats', $('formats').value);
+      $('go').disabled = true;
+      $('progress').classList.remove('hidden');
+      $('downloads').innerHTML = '';
+      const res = await fetch('/api/transcribe', { method: 'POST', body: fd });
+      if (!res.ok) { $('state').textContent = 'Error: ' + (await res.json()).detail; $('go').disabled = false; return; }
+      const { job_id } = await res.json();
+      poll(job_id);
+    });
+
+    function poll(jobId) {
+      clearInterval(pollTimer);
+      pollTimer = setInterval(async () => {
+        const j = await (await fetch('/api/jobs/' + jobId)).json();
+        $('pct').textContent = j.percent + '%';
+        $('fill').style.width = j.percent + '%';
+        $('state').textContent = j.status === 'running'
+          ? `Transcribing ${j.completed_chunks}/${j.total_chunks} chunks`
+          : j.status[0].toUpperCase() + j.status.slice(1);
+        $('log').textContent = (j.log || []).join('\n');
+        if (j.status === 'completed' || j.status === 'error') {
+          clearInterval(pollTimer);
+          $('go').disabled = false;
+          if (j.status === 'completed') {
+            $('downloads').innerHTML = (j.outputs || []).map(fmt =>
+              `<a href="/api/jobs/${jobId}/download?format=${fmt}">⬇ ${fmt}</a>`).join('');
+          }
+        }
+      }, 700);
+    }
+  </script>
+</body>
+</html>

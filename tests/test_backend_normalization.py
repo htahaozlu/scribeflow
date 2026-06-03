@@ -10,9 +10,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from scribeflow.backends.faster_whisper import FasterWhisperBackend
+from scribeflow.engine.types import ChunkRequest, TranscribeOptions, TranscriptSegment
 from tests.fakes import FakeWhisperModel
-from yazit.backends.faster_whisper import FasterWhisperBackend
-from yazit.engine.types import ChunkRequest, TranscribeOptions, TranscriptSegment
 
 
 def _request(tmp_path: Path) -> ChunkRequest:
@@ -76,8 +76,8 @@ def test_fingerprint_shape() -> None:
 def test_run_batch_via_faster_whisper_adapter(sample_video: Path, tmp_path: Path) -> None:
     """Contract: process_video runs end-to-end against the adapter and persists the
     backend fingerprint + RunIdentity (the adapter writes NO checkpoint files)."""
-    from yazit.engine.pipeline import EngineConfig, run_batch
-    from yazit.engine.types import ChunkingSpec
+    from scribeflow.engine.pipeline import EngineConfig, run_batch
+    from scribeflow.engine.types import ChunkingSpec
 
     model = FakeWhisperModel(segments=[(0.0, 2.0, "bu bir test cümlesidir burada")])
     backend = FasterWhisperBackend("tiny", device="cpu", compute_type="int8", model=model)

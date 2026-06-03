@@ -1,4 +1,4 @@
-# Continuous integration: lint, type-check, and test yazit across the
+# Continuous integration: lint, type-check, and test scribeflow across the
 # supported OS x Python matrix. ffmpeg is the one system dependency, so we
 # install it explicitly on each runner before the dev install.
 name: ci
@@ -45,7 +45,7 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install ffmpeg
 
-      - name: Install yazit with dev extras
+      - name: Install scribeflow with dev extras
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e '.[dev]'

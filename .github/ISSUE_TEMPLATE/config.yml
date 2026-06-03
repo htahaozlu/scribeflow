@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Questions & discussion
-    url: https://github.com/htahaozlu/yazit/discussions
+    url: https://github.com/htahaozlu/scribeflow/discussions
     about: Ask questions, share setups, and discuss ideas with the community.
   - name: Documentation
-    url: https://github.com/htahaozlu/yazit#readme
+    url: https://github.com/htahaozlu/scribeflow#readme
     about: Quickstart, configuration, and Colab usage live in the README and docs/.

@@ -12,17 +12,17 @@ from pathlib import Path
 
 import pytest
 
-from tests.fakes import FakeOpenaiModel, FakeWhisperModel
-from yazit.backends import registry
-from yazit.backends.faster_whisper import FasterWhisperBackend
-from yazit.backends.openai_whisper import OpenaiWhisperBackend, normalize_openai
-from yazit.backends.whispercpp import (
+from scribeflow.backends import registry
+from scribeflow.backends.faster_whisper import FasterWhisperBackend
+from scribeflow.backends.openai_whisper import OpenaiWhisperBackend, normalize_openai
+from scribeflow.backends.whispercpp import (
     WhisperCppBackend,
     find_whispercpp_binary,
     parse_whispercpp_json,
     resolve_model_path,
 )
-from yazit.engine.types import ChunkRequest, TranscribeOptions, TranscriptSegment
+from scribeflow.engine.types import ChunkRequest, TranscribeOptions, TranscriptSegment
+from tests.fakes import FakeOpenaiModel, FakeWhisperModel
 
 SEGMENTS = [(0.0, 1.5, "merhaba dunya"), (1.5, 3.0, "nasilsin bugun")]
 EXPECTED = (
@@ -88,7 +88,8 @@ def test_create_whispercpp_forwards_download_root(
     whisper.cpp backend must accept it (uses it as the ggml models dir)."""
     (tmp_path / "ggml-tiny.bin").write_bytes(b"\x00")
     monkeypatch.setattr(
-        "yazit.backends.whispercpp.find_whispercpp_binary", lambda explicit=None: "/usr/bin/true"
+        "scribeflow.backends.whispercpp.find_whispercpp_binary",
+        lambda explicit=None: "/usr/bin/true",
     )
     backend = registry.create_backend(
         "whispercpp",
@@ -133,7 +134,8 @@ def test_whispercpp_subprocess_plumbing(tmp_path: Path, monkeypatch: pytest.Monk
     model_file = tmp_path / "ggml-m.bin"
     model_file.write_bytes(b"\x00")
     monkeypatch.setattr(
-        "yazit.backends.whispercpp.find_whispercpp_binary", lambda explicit=None: "/usr/bin/true"
+        "scribeflow.backends.whispercpp.find_whispercpp_binary",
+        lambda explicit=None: "/usr/bin/true",
     )
 
     def fake_run(cmd, check, capture_output):
@@ -141,7 +143,7 @@ def test_whispercpp_subprocess_plumbing(tmp_path: Path, monkeypatch: pytest.Monk
         prefix = Path(cmd[cmd.index("-of") + 1])
         prefix.with_suffix(".json").write_text(json.dumps(_whispercpp_json()), encoding="utf-8")
 
-    monkeypatch.setattr("yazit.backends.whispercpp.subprocess.run", fake_run)
+    monkeypatch.setattr("scribeflow.backends.whispercpp.subprocess.run", fake_run)
 
     backend = WhisperCppBackend("m", models_dir=str(tmp_path))
     result = backend.transcribe_chunk(_request(tmp_path))
@@ -153,7 +155,7 @@ def test_whispercpp_subprocess_plumbing(tmp_path: Path, monkeypatch: pytest.Monk
 def test_whispercpp_validates_binary_and_model(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    find = "yazit.backends.whispercpp.find_whispercpp_binary"
+    find = "scribeflow.backends.whispercpp.find_whispercpp_binary"
     monkeypatch.setattr(find, lambda explicit=None: None)
     with pytest.raises(RuntimeError, match="binary not found"):
         WhisperCppBackend("m")

@@ -1,14 +1,14 @@
 # 04 — Conventions, Packaging & Publishing
 
 > Mirror the owner's sibling project [`context-bar`](https://github.com/htahaozlu/context-bar)
-> conventions, **adapted to Python** (context-bar is Rust+Swift; Yazıt is pure Python). Goal: the new
+> conventions, **adapted to Python** (context-bar is Rust+Swift; ScribeFlow is pure Python). Goal: the new
 > repo feels like a sibling — same license, bilingual docs, badge style, commit discipline,
 > governance, "minimal but crafted" aesthetic.
 
 ## 1. Naming
 
 - Pattern from context-bar: short, evocative, kebab-case package + CamelCase/display name.
-- **Display:** `Yazıt` · **package / CLI / PyPI:** `yazit` (ASCII). One constant `yazit.__about__`.
+- **Display:** `ScribeFlow` · **package / CLI / PyPI:** `scribeflow` (ASCII). One constant `scribeflow.__about__`.
 - Treat the name as a single find-replace token across the codebase (doc 00).
 
 ## 2. License — **Apache-2.0**
@@ -26,8 +26,8 @@ context-bar is Apache-2.0. Match it. Full `LICENSE` text + `pyproject.toml` `lic
 
 ## 4. Packaging (Python — D2: pip/PyPI)
 
-- **`pyproject.toml`** (PEP 621), build backend `hatchling` or `setuptools`. Single source layout `src/yazit/`.
-- **Console entry point:** `yazit = "yazit.cli:main"`. Optional short alias documented, not duplicated.
+- **`pyproject.toml`** (PEP 621), build backend `hatchling` or `setuptools`. Single source layout `src/scribeflow/`.
+- **Console entry point:** `scribeflow = "scribeflow.cli:main"`. Optional short alias documented, not duplicated.
 - **Optional extras** (keep base install tiny — base = engine + faster-whisper):
   - `[gpu]` torch+CUDA notes (document, don't hard-pin), `[cpp]` pywhispercpp / build helper,
     `[openai]` openai-whisper, `[web]` fastapi+uvicorn+jinja/htmx, `[url]` yt-dlp, `[drive]` Drive API/mount helpers, `[dev]` pytest+ruff+mypy.
