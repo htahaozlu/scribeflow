@@ -1,12 +1,15 @@
-# Idempotent PyPI publish via OIDC trusted publishing. Runs when a GitHub
-# Release is published (see release.yml). No API token is stored: the
-# `pypi` environment plus id-token: write let PyPI verify the workflow's
-# OIDC identity directly. skip-existing makes re-runs safe.
+# Idempotent PyPI publish via OIDC trusted publishing. Triggers directly on a
+# SemVer tag push (a release created by the default GITHUB_TOKEN does NOT trigger
+# other workflows, so we key off the tag, not the release) and can be run by hand.
+# No API token is stored: the `pypi` environment + id-token: write let PyPI verify
+# the workflow's OIDC identity. skip-existing makes re-runs safe.
 name: publish
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: read
