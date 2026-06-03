@@ -71,6 +71,22 @@ def _patch_host(monkeypatch, **overrides) -> None:
     monkeypatch.setattr(devices, "detect_host", lambda: host)
 
 
+@pytest.mark.parametrize("ram", [8.0, 16.0])
+def test_metal_is_accelerated_tier_not_ram_downgraded(ram) -> None:
+    # whisper.cpp Metal must never be downgraded to a draft model by system RAM.
+    assert model_policy.choose_model("metal", ram_gb=ram) == "large-v3-turbo"
+    assert model_policy.choose_model("metal", ram_gb=ram, want="quality") == "large-v3"
+    assert model_policy.choose_model("metal", ram_gb=ram) not in {"tiny", "base", "small"}
+
+
+def test_apple_silicon_faster_whisper_cuda_override_is_clamped(monkeypatch) -> None:
+    _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
+    res = model_policy.auto_select(backend="faster-whisper", device="cuda")
+    assert res.device == "cpu"  # invalid cuda on Apple Silicon → clamped
+    assert res.compute_type == "int8"
+    assert "clamped" in res.reason  # reason reflects the actual choice
+
+
 def test_auto_select_apple_silicon_never_offers_cuda(monkeypatch) -> None:
     _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
     res = model_policy.auto_select()
@@ -84,7 +100,24 @@ def test_auto_select_apple_silicon_routes_to_whispercpp_when_preferred(monkeypat
     _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
     res = model_policy.auto_select(prefer_whispercpp_on_apple=True)
     assert res.backend == "whispercpp"
-    assert res.device == "cpu"
+    assert res.device == "metal"  # whisper.cpp uses the Metal path on Apple Silicon
+
+
+def test_auto_select_apple_routes_to_whispercpp_when_binary_available(monkeypatch) -> None:
+    _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
+    monkeypatch.setattr("yazit.backends.registry.is_available", lambda name: name == "whispercpp")
+    res = model_policy.auto_select()  # no explicit backend, no prefer flag
+    assert res.backend == "whispercpp"
+    assert res.device == "metal"
+    assert res.compute_type == "metal"
+
+
+def test_auto_select_apple_falls_back_to_faster_whisper_without_binary(monkeypatch) -> None:
+    _patch_host(monkeypatch, is_apple_silicon=True, device="cpu", compute_type="int8")
+    monkeypatch.setattr("yazit.backends.registry.is_available", lambda name: False)
+    res = model_policy.auto_select()
+    assert res.backend == "faster-whisper"
+    assert res.device == "cpu"  # never cuda/mps for faster-whisper on Apple Silicon
 
 
 def test_auto_select_cuda_host(monkeypatch) -> None:

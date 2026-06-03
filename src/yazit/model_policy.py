@@ -49,6 +49,14 @@ def choose_model(
     if override:
         return override
 
+    if device == "metal":
+        # Apple-Silicon GPU (whisper.cpp Metal) — accelerated, NOT a system-RAM
+        # CPU tier. docs/ai/03 §3: default whisper.cpp turbo, never a draft model.
+        return _pick(
+            {"speed": "large-v3-turbo", "quality": "large-v3", "default": GLOBAL_DEFAULT_MODEL},
+            want,
+        )
+
     if device == "cuda":
         if vram_gb >= 12:  # Colab T4 is 16GB — do NOT downgrade here.
             return _pick(
@@ -92,23 +100,48 @@ def auto_select(
     CPU int8 — and crucially never cuda/mps for faster-whisper (docs/ai/03 §2).
     """
     host = devices.detect_host()
-    chosen_device = device or host.device
-    chosen_compute = compute_type or host.compute_type
+    chosen_backend = backend or "faster-whisper"
+    reason_bits = []
+
+    # Apple Silicon: faster-whisper is CPU-only (CT2 has no Metal). Prefer the
+    # whisper.cpp Metal path when its binary is available (or explicitly asked).
+    if host.is_apple_silicon and not backend:
+        from yazit.backends.registry import is_available
+
+        if prefer_whispercpp_on_apple or is_available("whispercpp"):
+            chosen_backend = "whispercpp"
+
+    if chosen_backend == "whispercpp" and host.is_apple_silicon:
+        chosen_device = device or "metal"
+        chosen_compute = compute_type or "metal"
+        reason_bits.append("apple-silicon → whisper.cpp (Metal)")
+    else:
+        chosen_device = device or host.device
+        chosen_compute = compute_type or host.compute_type
+        # faster-whisper has no cuda/mps on Apple Silicon (CT2 has no Metal). An
+        # explicit cuda/mps override there is invalid → warn and stay CPU int8
+        # (docs/ai/03 §4), keeping the reason honest about what was chosen.
+        if (
+            host.is_apple_silicon
+            and chosen_backend == "faster-whisper"
+            and chosen_device in ("cuda", "mps")
+        ):
+            reason_bits.append(
+                f"apple-silicon: faster-whisper has no {chosen_device} (CT2 has no Metal) "
+                "→ clamped to CPU int8"
+            )
+            chosen_device = "cpu"
+            chosen_compute = "int8"
+        elif host.is_apple_silicon:
+            reason_bits.append("apple-silicon → faster-whisper CPU int8 (CT2 has no Metal)")
+        elif host.has_cuda:
+            reason_bits.append(f"cuda {host.vram_gb}GB → {chosen_compute}")
+        else:
+            reason_bits.append(f"cpu {host.ram_gb}GB → int8")
+
     chosen_model = choose_model(
         chosen_device, vram_gb=host.vram_gb, ram_gb=host.ram_gb, want=want, override=model
     )
-
-    chosen_backend = backend or "faster-whisper"
-    reason_bits = []
-    if host.is_apple_silicon:
-        reason_bits.append("apple-silicon → faster-whisper CPU int8 (CT2 has no Metal)")
-        if prefer_whispercpp_on_apple and not backend:
-            chosen_backend = "whispercpp"
-            reason_bits.append("routed to whisper.cpp (Metal)")
-    elif host.has_cuda:
-        reason_bits.append(f"cuda {host.vram_gb}GB → {chosen_compute}")
-    else:
-        reason_bits.append(f"cpu {host.ram_gb}GB → int8")
 
     # Guard: never let auto-selection (no explicit model) land on a forbidden tier.
     if not model and chosen_model in FORBIDDEN_AUTO_MODELS:

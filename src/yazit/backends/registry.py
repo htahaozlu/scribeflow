@@ -25,8 +25,8 @@ class BackendSpec:
 
 KNOWN_BACKENDS: dict[str, BackendSpec] = {
     "faster-whisper": BackendSpec("faster-whisper", "faster_whisper", None, True),
-    "whispercpp": BackendSpec("whispercpp", "pywhispercpp", "cpp", False),
-    "openai-whisper": BackendSpec("openai-whisper", "whisper", "openai", False),
+    "whispercpp": BackendSpec("whispercpp", "", "cpp", True),  # availability = binary on PATH
+    "openai-whisper": BackendSpec("openai-whisper", "whisper", "openai", True),
 }
 
 DEFAULT_BACKEND = "faster-whisper"
@@ -36,6 +36,11 @@ def is_available(name: str) -> bool:
     spec = KNOWN_BACKENDS.get(name)
     if spec is None:
         return False
+    if name == "whispercpp":
+        # whisper.cpp is a separate binary, not a Python import.
+        from yazit.backends.whispercpp import find_whispercpp_binary
+
+        return find_whispercpp_binary() is not None
     return importlib.util.find_spec(spec.import_name) is not None
 
 
@@ -57,10 +62,13 @@ def create_backend(
             f"Unknown backend {name!r}. Known: {sorted(KNOWN_BACKENDS)}"
         )
     if name == "faster-whisper":
-        return FasterWhisperBackend(
-            model, device=device, compute_type=compute_type, **kwargs
-        )
-    raise NotImplementedError(
-        f"Backend {name!r} is registered but not wired yet (added in P6). "
-        f"Install its extra with: pip install yazit[{spec.extra}]"
-    )
+        return FasterWhisperBackend(model, device=device, compute_type=compute_type, **kwargs)
+    if name == "whispercpp":
+        from yazit.backends.whispercpp import WhisperCppBackend
+
+        return WhisperCppBackend(model, device=device, compute_type=compute_type, **kwargs)
+    if name == "openai-whisper":
+        from yazit.backends.openai_whisper import OpenaiWhisperBackend
+
+        return OpenaiWhisperBackend(model, device=device, compute_type=compute_type, **kwargs)
+    raise NotImplementedError(f"Backend {name!r} has no factory.")  # pragma: no cover

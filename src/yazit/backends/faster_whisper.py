@@ -109,7 +109,15 @@ class FasterWhisperBackend:
         raw_text = " ".join(parts).strip()
         fallback_lang = opts.language if opts.language not in ("auto", "") else "und"
         language = getattr(info, "language", None) or fallback_lang
-        duration = float(getattr(info, "duration", 0.0) or 0.0)
+        # Normalized `duration` = spoken extent (last segment end), so the metric
+        # is consistent across all three backends (whisper.cpp / openai-whisper
+        # have no info.duration). The chunk's true audio length is tracked
+        # separately via ffprobe in the pipeline summary.
+        duration = (
+            round(segments[-1].end, 2)
+            if segments
+            else float(getattr(info, "duration", 0.0) or 0.0)
+        )
         return TranscriptionResult(
             text=raw_text,
             segments=tuple(segments),

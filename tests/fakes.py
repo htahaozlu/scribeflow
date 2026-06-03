@@ -58,6 +58,24 @@ class FakeWhisperModel:
         return segments, _FWInfo(self._language, self._duration)
 
 
+class FakeOpenaiModel:
+    """Mimics ``whisper.load_model(...)`` — ``transcribe`` returns a dict with
+    ``segments`` / ``language`` / ``text`` (the openai-whisper shape)."""
+
+    def __init__(self, segments: list[tuple[float, float, str]], *, language: str = "tr") -> None:
+        self._segments = segments
+        self._language = language
+        self.calls: list[tuple[str, dict[str, Any]]] = []
+
+    def transcribe(self, audio: str, **kwargs: Any) -> dict[str, Any]:
+        self.calls.append((audio, kwargs))
+        return {
+            "segments": [{"start": s, "end": e, "text": t} for (s, e, t) in self._segments],
+            "language": self._language,
+            "text": " ".join(t for (_, _, t) in self._segments),
+        }
+
+
 class FakeDeterministicBackend:
     """Implements the TranscriptionBackend Protocol. Output depends only on the
     chunk index, so it is byte-for-byte reproducible across runs."""
