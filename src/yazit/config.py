@@ -188,4 +188,9 @@ def load_config(
         raise ConfigError("chunk_minutes must be >= 1")
     if config.beam_size < 1:
         raise ConfigError("beam_size must be >= 1")
+    from yazit.engine.exporters import VALID_FORMATS
+
+    for fmt in config.formats:
+        if fmt not in VALID_FORMATS:
+            raise ConfigError(f"unknown format {fmt!r}; valid: {', '.join(VALID_FORMATS)}")
     return config

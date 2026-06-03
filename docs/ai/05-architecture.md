@@ -231,8 +231,9 @@ Respect `NO_COLOR`, auto-disable color when piped, `--json` machine output, `--l
 > - **Audio language is `--language`/`-l`**; **interface language is `--ui-lang`/`--lang en|tr`**
 >   (the spec token `--lang` was overloaded above; the CLI splits the two and accepts `--lang`
 >   as the UI-language alias).
-> - **`--format` and the txt/srt/vtt/json exporters land in P7** (docs/ai/06). Until then
->   `transcribe` always writes the `.txt` transcript; the `formats` config key is inert.
+> - **`--format txt,srt,vtt,json`** is implemented (P7): `transcribe` always writes the
+>   `.txt` transcript and generates any additional requested formats from the per-chunk
+>   segments (subtitle timecodes are shifted by `chunk_index * chunk_seconds`).
 > - `gen-notebook` (P5) and `web` (P8) are added in their phases. The notebook
 >   always writes durable output to Google Drive on Colab, so the spec's
 >   `[--drive]` flag is omitted (it would be inert/redundant).

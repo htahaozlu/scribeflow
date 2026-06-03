@@ -87,6 +87,11 @@ def test_non_positive_chunk_minutes_raises(tmp_path: Path) -> None:
         load_config({"chunk_minutes": 0}, env={})
 
 
+def test_unknown_format_raises_config_error() -> None:
+    with pytest.raises(ConfigError):
+        load_config({"formats": "txt,flac"}, env={})
+
+
 def test_toml_type_confusion_is_tolerated(tmp_path: Path) -> None:
     # `output` as a string (not a table) must not crash — it is ignored.
     toml = tmp_path / "yazit.toml"

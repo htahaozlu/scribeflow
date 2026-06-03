@@ -22,6 +22,7 @@ from yazit.backends import registry
 from yazit.config import ConfigError, YazitConfig, load_config
 from yazit.devices import detect_host
 from yazit.engine.chunking import ensure_ffmpeg, ffmpeg_version
+from yazit.engine.exporters import export
 from yazit.engine.pipeline import EngineConfig, run_batch
 from yazit.engine.types import ChunkingSpec, RuntimeDirs, SourceSpec, TranscribeOptions
 from yazit.model_policy import MODEL_CATALOG, ModelResolution, auto_select
@@ -141,6 +142,7 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
             "overwrite": args.overwrite,
             "json_output": args.json,
             "ui_lang": args.ui_lang,
+            "formats": args.format,
         },
         config_path=Path(args.config) if args.config else None,
     )
@@ -217,14 +219,30 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
         print(style.red(f"transcription failed: {exc}"), file=sys.stderr)
         return 7
 
+    # Exporters (P7): the engine always wrote the .txt transcript; generate any
+    # additional requested formats (srt/vtt/json) from the per-chunk segments.
+    exports: dict[str, dict[str, str]] = {}
+    if any(fmt != "txt" for fmt in cfg.formats):
+        for media_path in media_paths:
+            video_dir = dirs.output_dir / media_path.stem
+            if video_dir.exists():
+                written = export(video_dir, cfg.formats)
+                exports[media_path.stem] = {fmt: str(p) for fmt, p in written.items()}
+
     if cfg.json_output:
-        print(json.dumps(summary, ensure_ascii=False, indent=2, default=str))
+        print(
+            json.dumps({**summary, "exports": exports}, ensure_ascii=False, indent=2, default=str)
+        )
     else:
         print(style.green(t("done", lang, out=dirs.output_dir)))
         for video in summary.get("videos", []):
             transcript = video.get("transcript_path")
             if transcript:
                 print(f"  {style.dim('•')} {video.get('video_name')} → {transcript}")
+        for stem, fmts in exports.items():
+            extra = ", ".join(f for f in fmts if f != "txt")
+            if extra:
+                print(f"  {style.dim('•')} {stem}: {extra}")
     return 0
 
 
@@ -378,6 +396,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tr.add_argument("--chunk-minutes", dest="chunk_minutes", type=int, default=None)
     tr.add_argument("--beam-size", dest="beam_size", type=int, default=None)
+    tr.add_argument(
+        "--format",
+        default=None,
+        help="output formats (comma-separated): txt,srt,vtt,json (txt always written)",
+    )
     tr.add_argument("--out", default=None, help="durable output dir (transcripts + checkpoints)")
     tr.add_argument("--workspace", default=None, help="scratch dir (audio chunks; heavy I/O)")
     tr.add_argument("--cache-dir", dest="cache_dir", default=None, help="model download cache")

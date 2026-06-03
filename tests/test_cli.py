@@ -152,6 +152,28 @@ def test_transcribe_engine_error_is_friendly(
     assert "Traceback" not in err
 
 
+def test_transcribe_unknown_format_clean_error_no_partial(
+    sample_video: Path, tmp_path: Path, fake_backend: None, capsys: pytest.CaptureFixture[str]
+) -> None:
+    rc = main(
+        [
+            "transcribe",
+            str(sample_video),
+            "--out",
+            str(tmp_path / "o"),
+            "--workspace",
+            str(tmp_path / "w"),
+            "--format",
+            "flac",
+        ]
+    )
+    assert rc == 5  # ConfigError → clean exit, validated before any transcription
+    err = capsys.readouterr().err
+    assert "Traceback" not in err
+    assert "unknown format" in err
+    assert not (tmp_path / "o" / sample_video.stem).exists()  # nothing transcribed/written
+
+
 def test_no_color_disables_ansi(
     sample_video: Path, tmp_path: Path, fake_backend: None, monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
