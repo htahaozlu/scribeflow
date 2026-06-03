@@ -9,7 +9,7 @@
     <tspan x="24" y="74" fill="#7DCEA0">$ </tspan><tspan fill="#e6edf3">scribeflow transcribe lecture.mp4 --format srt</tspan>
     <tspan x="24" y="104" fill="#58a6ff">Transcribing 1 file — faster-whisper / large-v3-turbo on cpu (int8)</tspan>
     <tspan x="24" y="132" fill="#8b949e">chunk  4/12  </tspan><tspan fill="#2F81F7">████████░░░░░░░░░░░░░░░░</tspan><tspan fill="#8b949e">  33%</tspan>
-    <tspan x="24" y="160" fill="#f85149">^C  (kapandı / koptu)</tspan>
+    <tspan x="24" y="160" fill="#f85149">^C  (interrupted)</tspan>
     <tspan x="24" y="196" fill="#7DCEA0">$ </tspan><tspan fill="#e6edf3">scribeflow transcribe lecture.mp4 --format srt</tspan>
     <tspan x="24" y="224" fill="#8b949e">chunk skipped (already saved): 1/12 … 4/12   </tspan><tspan fill="#7DCEA0">resumed ✓</tspan>
     <tspan x="24" y="252" fill="#8b949e">chunk 12/12  </tspan><tspan fill="#7DCEA0">████████████████████████</tspan><tspan fill="#8b949e">  100%</tspan>
