@@ -81,10 +81,10 @@ birebir kelimesi kelimesine bir kayıt değildir.
 ## Demo
 
 <p align="center">
-  <img src="docs/images/demo.svg" alt="ScribeFlow bir dersi deşifre ediyor, kesiliyor, sonra devam ediyor" width="720" />
+  <img src="docs/images/demo.gif" alt="ScribeFlow bir dersi deşifre ediyor, kesiliyor, sonra devam ediyor" width="760" />
 </p>
 <p align="center"><sub><em>Deşifreyi başlat, kes, aynı komutu yeniden çalıştır — kaldığı yerden devam edip bitirir.</em></sub></p>
-<p align="center"><sub>Statik önizleme · canlı GIF üretmek için <a href="scripts/record-demo.sh"><code>scripts/record-demo.sh</code></a> (<a href="https://github.com/charmbracelet/vhs">vhs</a> gerekir).</sub></p>
+<p align="center"><sub>Yeniden üret: <code>scripts/make-demo-gif.py</code> (her yerde çalışır) ya da <code>scripts/record-demo.sh</code> (gerçek kayıt, <a href="https://github.com/charmbracelet/vhs">vhs</a> gerekir).</sub></p>
 
 ---
 
