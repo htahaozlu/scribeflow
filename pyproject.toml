@@ -80,6 +80,10 @@ ignore = ["RUF001", "RUF002", "RUF003"]  # allow Turkish characters in strings/c
 [tool.ruff.lint.isort]
 known-first-party = ["yazit"]
 
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's File/Form/Query/Depends in argument defaults are the idiomatic pattern.
+extend-immutable-calls = ["fastapi.File", "fastapi.Form", "fastapi.Query", "fastapi.Depends"]
+
 [tool.mypy]
 python_version = "3.10"
 files = ["src/yazit", "tests"]

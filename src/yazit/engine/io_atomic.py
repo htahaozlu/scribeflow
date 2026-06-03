@@ -13,9 +13,21 @@ from __future__ import annotations
 
 import json
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+
+def _temp_path(path: Path) -> Path:
+    """A UNIQUE sibling temp name (``<name>.<uuid>.tmp``).
+
+    Unique (not a fixed ``<name>.tmp``) so two concurrent writers to the same
+    final path — e.g. two web jobs transcribing the same-named upload into the
+    same output dir — never clobber each other's in-flight temp file. Atomicity
+    still comes from ``os.replace``; the orphan-temp sweep globs ``*.tmp``.
+    """
+    return path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
 
 
 def timestamp() -> str:
@@ -53,7 +65,7 @@ def read_json(path: Path, default: Any) -> Any:
 def write_json(path: Path, data: Any) -> None:
     """Atomic JSON write: mkdir -p → write ``<suffix>.tmp`` → ``os.replace``."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    temp_path = path.with_suffix(f"{path.suffix}.tmp")
+    temp_path = _temp_path(path)
     with temp_path.open("w", encoding="utf-8") as handle:
         json.dump(data, handle, ensure_ascii=False, indent=2)
     temp_path.replace(path)
@@ -62,7 +74,7 @@ def write_json(path: Path, data: Any) -> None:
 def write_text(path: Path, content: str) -> None:
     """Atomic text write: same temp-then-replace as :func:`write_json`."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    temp_path = path.with_suffix(f"{path.suffix}.tmp")
+    temp_path = _temp_path(path)
     with temp_path.open("w", encoding="utf-8") as handle:
         handle.write(content)
     temp_path.replace(path)

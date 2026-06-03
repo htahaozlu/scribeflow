@@ -171,8 +171,13 @@ def test_torn_replace_leaves_no_partial_file(
     with pytest.raises(CrashInjected):
         run_batch(config, backend, [sample_video])
 
-    # Torn state: tmp present, real file absent, and read_json never sees the tmp.
-    assert (chunk_outputs / "chunk_001.json.tmp").exists()
+    # Torn state: a (uniquely-named) tmp present, real file absent, read_json blind to the tmp.
+    tmps = [
+        p
+        for p in chunk_outputs.iterdir()
+        if p.name.startswith("chunk_001.json") and p.suffix == ".tmp"
+    ]
+    assert tmps, "the torn write should leave its temp file behind"
     assert not (chunk_outputs / "chunk_001.json").exists()
     assert io_atomic.read_json(chunk_outputs / "chunk_001.json", default={"missing": True}) == {
         "missing": True

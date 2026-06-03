@@ -126,6 +126,35 @@ def test_orphan_tmp_swept_on_resume(sample_video: Path, tmp_path: Path) -> None:
     _assert_final(video_dir)
 
 
+def test_concurrent_atomic_writes_never_corrupt(tmp_path: Path) -> None:
+    """Two threads hammering the SAME path (the concurrent-web-job scenario) must
+    never produce a torn file — unique temp names keep each write isolated."""
+    import threading
+
+    target = tmp_path / "shared.json"
+    payload_a = {"writer": "a", "data": list(range(60))}
+    payload_b = {"writer": "b", "data": list(range(60, 120))}
+    errors: list[Exception] = []
+
+    def writer(payload: dict) -> None:
+        try:
+            for _ in range(60):
+                io_atomic.write_json(target, payload)
+        except Exception as exc:  # pragma: no cover - failure path
+            errors.append(exc)
+
+    threads = [threading.Thread(target=writer, args=(p,)) for p in (payload_a, payload_b)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert not errors
+    result = json.loads(target.read_text(encoding="utf-8"))  # always one complete payload
+    assert result in (payload_a, payload_b)
+    assert list(tmp_path.glob("*.tmp")) == []  # no orphaned temp files
+
+
 def test_identity_match_with_tuple_in_extra() -> None:
     fingerprint = BackendFingerprint(
         backend="faster-whisper",

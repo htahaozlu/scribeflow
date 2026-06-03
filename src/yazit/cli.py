@@ -338,6 +338,26 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     return 0 if ok else 1
 
 
+def cmd_web(args: argparse.Namespace) -> int:
+    style = make_style(sys.stdout)
+    try:
+        import uvicorn
+
+        from yazit.web.app import create_app
+    except ImportError:
+        print(
+            style.red("web UI needs the [web] extra: pip install 'yazit[web]'"), file=sys.stderr
+        )
+        return 3
+    app = create_app(
+        output_dir=Path(args.out).expanduser() if args.out else None,
+        workspace_dir=Path(args.workspace).expanduser() if args.workspace else None,
+    )
+    print(style.cyan(f"{APP_NAME} web UI → http://{args.host}:{args.port}"))
+    uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    return 0
+
+
 def cmd_gen_notebook(args: argparse.Namespace) -> int:
     style = make_style(sys.stdout)
     kind = infer_kind(args.source)
@@ -439,6 +459,13 @@ def build_parser() -> argparse.ArgumentParser:
     gn.add_argument("--chunk-minutes", dest="chunk_minutes", type=int, default=None)
     _add_common(gn)
     gn.set_defaults(func=cmd_gen_notebook)
+
+    wb = sub.add_parser("web", help="serve the web UI ([web] extra)")
+    wb.add_argument("--host", default="127.0.0.1")
+    wb.add_argument("--port", type=int, default=8000)
+    wb.add_argument("--out", default=None, help="durable output dir")
+    wb.add_argument("--workspace", default=None, help="scratch dir")
+    wb.set_defaults(func=cmd_web)
 
     return parser
 
