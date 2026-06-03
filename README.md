@@ -89,6 +89,7 @@ word-for-word record.
   <img src="docs/images/demo.svg" alt="ScribeFlow transcribing a lecture, interrupted, then resuming" width="720" />
 </p>
 <p align="center"><sub><em>Start a transcription, interrupt it, run the same command again — it resumes and finishes.</em></sub></p>
+<p align="center"><sub>Static preview · regenerate a live GIF with <a href="scripts/record-demo.sh"><code>scripts/record-demo.sh</code></a> (needs <a href="https://github.com/charmbracelet/vhs">vhs</a>).</sub></p>
 
 ---
 

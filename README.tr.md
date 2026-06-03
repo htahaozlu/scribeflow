@@ -84,6 +84,7 @@ birebir kelimesi kelimesine bir kayıt değildir.
   <img src="docs/images/demo.svg" alt="ScribeFlow bir dersi deşifre ediyor, kesiliyor, sonra devam ediyor" width="720" />
 </p>
 <p align="center"><sub><em>Deşifreyi başlat, kes, aynı komutu yeniden çalıştır — kaldığı yerden devam edip bitirir.</em></sub></p>
+<p align="center"><sub>Statik önizleme · canlı GIF üretmek için <a href="scripts/record-demo.sh"><code>scripts/record-demo.sh</code></a> (<a href="https://github.com/charmbracelet/vhs">vhs</a> gerekir).</sub></p>
 
 ---
 
