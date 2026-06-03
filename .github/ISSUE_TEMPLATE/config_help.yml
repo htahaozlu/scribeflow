@@ -1,0 +1,73 @@
+name: Configuration / hardware help
+description: Questions about configuration, hardware, backends, or model selection.
+title: "[Help]: "
+labels: ["question", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for "how do I configure this?" and "which model/backend
+        should I use on my hardware?" questions. If something is actually broken
+        (crashes, wrong output, tracebacks), please use the **Bug report** template
+        instead. For open-ended discussion, the Discussions board is also a great place.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What are you trying to configure or understand?
+      placeholder: |
+        I have an Apple Silicon Mac and want the fastest Turkish transcription.
+        Which backend/model should I use, and how do I enable the Metal GPU path?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      description: What is your question mainly about?
+      options:
+        - Hardware auto-select (which device/compute-type is picked)
+        - Model selection (which model for my use case / language)
+        - Backend setup (faster-whisper / whisper.cpp / openai-whisper)
+        - whisper.cpp on Apple Silicon (binary + ggml model, env vars)
+        - GPU / CUDA setup
+        - Config file (yazit.toml) / CLI flags
+        - Sources (local / URL / Google Drive / upload)
+        - Resume / checkpoints behavior
+        - Colab usage
+        - Output formats (txt / srt / vtt / json)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`yazit doctor` output (recommended)"
+      description: >
+        Paste the output of `yazit doctor`. It shows ffmpeg, the detected device,
+        VRAM/RAM, and which backends are available — this usually answers half the
+        question by itself. Optional but very helpful.
+      render: text
+    validations:
+      required: false
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system + architecture
+      description: e.g. "macOS 14 arm64", "Ubuntu 22.04 x86_64 + RTX 4090", "Google Colab T4".
+      placeholder: macOS 14 (Apple Silicon / arm64)
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: Commands, config, env vars (e.g. `YAZIT_WHISPERCPP_BIN`, `YAZIT_WHISPERCPP_MODELS`) you have already attempted.
+      render: shell
+    validations:
+      required: false

@@ -1,0 +1,74 @@
+name: Feature request
+description: Suggest a new capability or an improvement to Yazıt.
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping make Yazıt better! Please describe the problem you are
+        trying to solve first — that helps us find the right solution, which may
+        differ from the one you have in mind.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched existing issues and discussions and did not find this request.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the use case and the pain point. What can't you do today?
+      placeholder: |
+        When I transcribe long lectures from Google Drive, I want ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like Yazıt to do? A CLI flag, a new backend, a new output format, etc.
+      placeholder: |
+        Add a `--foo` flag to `yazit transcribe` that ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of Yazıt does this relate to?
+      options:
+        - CLI / commands
+        - Engine / resume / checkpoints
+        - Backends (faster-whisper / whisper.cpp / openai-whisper)
+        - Hardware auto-select / model policy
+        - Sources (local / url / drive / upload)
+        - Output formats (txt / srt / vtt / json)
+        - Colab / notebook generation
+        - Web UI
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you currently use, or other approaches you weighed.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else — examples, links, or screenshots.
+    validations:
+      required: false

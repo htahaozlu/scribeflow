@@ -1,0 +1,129 @@
+name: Bug report
+description: Something in Yazıt is broken or behaves incorrectly.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report!
+
+        Please fill in as much as you can — the **`yazit doctor` output** and the
+        **exact command** you ran are the two most useful things for diagnosis.
+        For questions about configuration, hardware, or model selection, please
+        use the **Configuration / hardware help** template instead.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched existing issues and this has not been reported yet.
+          required: true
+        - label: I am running the latest released version (or a recent `main`).
+          required: false
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including what you expected to happen instead.
+      placeholder: |
+        I ran a transcription and ...
+        I expected ... but instead ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command
+      description: The exact `yazit` command you ran (copy-paste it verbatim).
+      render: shell
+      placeholder: yazit transcribe ./lecture.mp4 --format srt,vtt
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`yazit doctor` output"
+      description: >
+        Run `yazit doctor` (or `yazit doctor --json`) and paste the full output.
+        This shows ffmpeg, device, VRAM/RAM, and which backends are available.
+      render: text
+      placeholder: |
+        $ yazit doctor
+        Yazıt doctor
+          ✓ ffmpeg            ...
+          ...
+          status: ready
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system + architecture
+      description: Where are you running Yazıt?
+      options:
+        - macOS (Apple Silicon / arm64)
+        - macOS (Intel / x86_64)
+        - Linux (x86_64)
+        - Linux (arm64)
+        - Google Colab
+        - Windows (WSL)
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      description: Which transcription backend was in use? (`yazit models` shows the auto-pick.)
+      options:
+        - faster-whisper (default)
+        - whisper.cpp (Apple-Silicon Metal)
+        - openai-whisper
+        - Not sure / auto-selected
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: Which model was used (e.g. `large-v3-turbo`)? Leave blank if auto-selected.
+      placeholder: large-v3-turbo
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: Yazıt version
+      description: Output of `yazit --version`.
+      placeholder: yazit 0.1.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / error output
+      description: >
+        Paste the full error message or traceback. Re-running with `--json` often
+        gives a cleaner machine-readable picture. This will be rendered as code,
+        so no need for backticks.
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: Media details (duration, format), Drive/URL source, resume vs. fresh run, etc.
+    validations:
+      required: false
