@@ -1,11 +1,8 @@
 <p align="center">
-  <!-- Görseller docs/images/ altında yer alır; sahibinin sağlayacağı varlıklar — eklenene kadar yer tutucudur. -->
-  <img src="docs/images/logo.svg" alt="ScribeFlow" width="160" />
+  <img src="docs/images/logo.png" alt="ScribeFlow — Whisper transcription everywhere" width="520" />
 </p>
 
-<h1 align="center">ScribeFlow</h1>
-
-<p align="center"><em>Taşınabilir, kaldığı yerden devam edebilen, çok arka uçlu Whisper deşifresi — her yerde çalışır, çökmeden sonra kaldığı yerden sürdürür.</em></p>
+<p align="center"><em>Taşınabilir, kaldığı yerden devam edebilen, çok arka uçlu Whisper deşifresi — her yerde çalışır.</em></p>
 
 <p align="center">
   <a href="https://pypi.org/project/scribeflow/"><img alt="PyPI" src="https://img.shields.io/pypi/v/scribeflow?style=flat-square&color=2F81F7" /></a>
@@ -22,7 +19,6 @@ o donanıma en uygun Whisper modelini seçer ve temiz deşifreler üretir — ç
 kopan bağlantılara karşı dayanıklıdır; tam olarak durduğu yerden devam eder.
 
 <p align="center"><img src="docs/images/demo.svg" alt="ScribeFlow demo" width="720" /></p>
-<!-- demo.gif yer tutucudur; sahibinin sağlayacağı varlık eklenene kadar görünmez. -->
 
 ## Neden ScribeFlow?
 

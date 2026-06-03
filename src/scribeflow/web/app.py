@@ -67,6 +67,10 @@ def create_app(*, output_dir: Path | None = None, workspace_dir: Path | None = N
     def index() -> str:
         return index_html
 
+    @app.get("/icon.png")
+    def icon() -> FileResponse:
+        return FileResponse(STATIC_DIR / "icon.png")
+
     @app.get("/api/models")
     def models() -> dict[str, Any]:
         return {

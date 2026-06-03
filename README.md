@@ -1,21 +1,14 @@
 <!--
-  Logo and demo are committed SVGs under docs/images/. The demo is a static
-  preview; record an animated GIF of a real run to replace docs/images/demo.svg
-  whenever you like.
+  Brand logo: docs/images/logo.png (horizontal) + docs/images/icon.png (square app
+  icon). demo.svg is a static terminal preview — swap in an animated GIF anytime.
 -->
 
 <p align="center">
-  <img src="docs/images/logo.svg" alt="ScribeFlow" width="180" />
+  <img src="docs/images/logo.png" alt="ScribeFlow — Whisper transcription everywhere" width="520" />
 </p>
-
-<h1 align="center">ScribeFlow</h1>
 
 <p align="center">
   <strong>English</strong> | <a href="README.tr.md">Türkçe</a>
-</p>
-
-<p align="center">
-  <strong>Portable, resumable, multi-backend Whisper transcription — runs anywhere.</strong>
 </p>
 
 <p align="center">
