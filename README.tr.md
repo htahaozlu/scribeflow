@@ -1,6 +1,6 @@
 <p align="center">
   <!-- Görseller docs/images/ altında yer alır; sahibinin sağlayacağı varlıklar — eklenene kadar yer tutucudur. -->
-  <img src="docs/images/logo.png" alt="ScribeFlow" width="160" />
+  <img src="docs/images/logo.svg" alt="ScribeFlow" width="160" />
 </p>
 
 <h1 align="center">ScribeFlow</h1>
@@ -21,7 +21,7 @@
 o donanıma en uygun Whisper modelini seçer ve temiz deşifreler üretir — çökmelere ve
 kopan bağlantılara karşı dayanıklıdır; tam olarak durduğu yerden devam eder.
 
-<p align="center"><img src="docs/images/demo.gif" alt="ScribeFlow demo" width="720" /></p>
+<p align="center"><img src="docs/images/demo.svg" alt="ScribeFlow demo" width="720" /></p>
 <!-- demo.gif yer tutucudur; sahibinin sağlayacağı varlık eklenene kadar görünmez. -->
 
 ## Neden ScribeFlow?

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+  <rect width="760" height="360" rx="14" fill="#0d1117"/>
+  <path d="M0 14 a14 14 0 0 1 14 -14 h732 a14 14 0 0 1 14 14 v24 h-760 z" fill="#161b22"/>
+  <circle cx="24" cy="19" r="6" fill="#ff5f56"/>
+  <circle cx="46" cy="19" r="6" fill="#ffbd2e"/>
+  <circle cx="68" cy="19" r="6" fill="#27c93f"/>
+  <text x="380" y="23" fill="#8b949e" font-size="12.5" text-anchor="middle">scribeflow — transcription that resumes</text>
+  <text font-size="14">
+    <tspan x="24" y="74" fill="#7DCEA0">$ </tspan><tspan fill="#e6edf3">scribeflow transcribe lecture.mp4 --format srt</tspan>
+    <tspan x="24" y="104" fill="#58a6ff">Transcribing 1 file — faster-whisper / large-v3-turbo on cpu (int8)</tspan>
+    <tspan x="24" y="132" fill="#8b949e">chunk  4/12  </tspan><tspan fill="#2F81F7">████████░░░░░░░░░░░░░░░░</tspan><tspan fill="#8b949e">  33%</tspan>
+    <tspan x="24" y="160" fill="#f85149">^C  (kapandı / koptu)</tspan>
+    <tspan x="24" y="196" fill="#7DCEA0">$ </tspan><tspan fill="#e6edf3">scribeflow transcribe lecture.mp4 --format srt</tspan>
+    <tspan x="24" y="224" fill="#8b949e">chunk skipped (already saved): 1/12 … 4/12   </tspan><tspan fill="#7DCEA0">resumed ✓</tspan>
+    <tspan x="24" y="252" fill="#8b949e">chunk 12/12  </tspan><tspan fill="#7DCEA0">████████████████████████</tspan><tspan fill="#8b949e">  100%</tspan>
+    <tspan x="24" y="288" fill="#7DCEA0">Done. Output in scribeflow-output/</tspan>
+    <tspan x="40" y="312" fill="#e6edf3">• lecture.mp4 → lecture_transcript.txt</tspan>
+    <tspan x="40" y="334" fill="#e6edf3">• lecture: srt</tspan>
+  </text>
+</svg>

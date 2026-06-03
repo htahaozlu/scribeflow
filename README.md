@@ -1,11 +1,11 @@
 <!--
-  README assets (docs/images/logo.png, docs/images/demo.gif) are owner-supplied
-  placeholders — add them under docs/images/ before publishing. Until then the
-  references below resolve to the intended file paths.
+  Logo and demo are committed SVGs under docs/images/. The demo is a static
+  preview; record an animated GIF of a real run to replace docs/images/demo.svg
+  whenever you like.
 -->
 
 <p align="center">
-  <img src="docs/images/logo.png" alt="ScribeFlow" width="180" />
+  <img src="docs/images/logo.svg" alt="ScribeFlow" width="180" />
 </p>
 
 <h1 align="center">ScribeFlow</h1>
@@ -43,7 +43,7 @@
 ## Demo
 
 <p align="center">
-  <img src="docs/images/demo.gif" alt="ScribeFlow transcribing a lecture and resuming after a crash" width="720" />
+  <img src="docs/images/demo.svg" alt="ScribeFlow transcribing a lecture and resuming after a crash" width="720" />
 </p>
 
 ---
@@ -91,6 +91,31 @@ From a clone (editable, with the dev toolchain):
 git clone https://github.com/htahaozlu/scribeflow
 cd scribeflow
 pip install -e '.[dev]'
+```
+
+### Run without installing (the `npx` equivalent)
+
+ScribeFlow is a **Python** CLI — there is no `npm`/`npx`; the equivalents are
+[pipx](https://pipx.pypa.io) and [uv](https://docs.astral.sh/uv/). Once published to
+PyPI:
+
+```bash
+pipx install scribeflow                 # isolated global install
+uvx scribeflow transcribe lecture.mp4   # run once, no install (like npx)
+```
+
+Before the PyPI release you can run it straight from a clone:
+
+```bash
+pipx install .            # from the cloned repo
+```
+
+### Homebrew (macOS) — planned
+
+After the first PyPI release, a tap will provide a one-liner:
+
+```bash
+brew install htahaozlu/tap/scribeflow   # planned (post-PyPI)
 ```
 
 > **Note** — the `[gpu]` extra documents the torch + CUDA path but does not hard-pin
